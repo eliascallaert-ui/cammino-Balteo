@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan B 15/10 — Cammino Balteo</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a2a3a; font-family: 'Segoe UI', Arial, sans-serif; min-height: 100vh; padding: 16px; }
+  .container { max-width: 900px; margin: 0 auto; }
+  h1 { text-align: center; color: white; font-size: 26px; margin-bottom: 4px; letter-spacing: 2px; }
+  .subtitle { text-align: center; color: #90caf9; font-size: 13px; margin-bottom: 20px; }
+
+  .map-area { position: relative; background: linear-gradient(180deg, #1e3a5f 0%, #243b55 50%, #2d5016 100%); border-radius: 16px; padding: 20px; overflow: hidden; min-height: 280px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+
+  svg.bg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  .stages-wrapper { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 60px 10px 40px; gap: 4px; }
+
+  .stage { display: flex; flex-direction: column; align-items: center; cursor: pointer; flex: 1; }
+  .stage-dot { width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.5); transition: transform 0.2s, box-shadow 0.2s; margin: 6px 0; }
+  .stage:hover .stage-dot { transform: scale(1.4); box-shadow: 0 4px 16px rgba(0,0,0,0.6); }
+  .stage-day { font-size: 9px; background: rgba(0,0,0,0.5); color: white; border-radius: 8px; padding: 2px 6px; font-weight: bold; }
+  .stage-name { font-size: 9px; font-weight: bold; color: white; text-align: center; margin-top: 4px; line-height: 1.3; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+  .stage-info { font-size: 8px; color: #b0bec5; text-align: center; margin-top: 2px; line-height: 1.3; }
+
+  .connector { position: absolute; top: 50%; left: 20px; right: 20px; height: 2px; background: repeating-linear-gradient(90deg, #ef5350 0px, #ef5350 10px, transparent 10px, transparent 18px); z-index: 1; transform: translateY(-50%); }
+
+  /* Tooltip */
+  .tooltip { display: none; position: fixed; background: #0d1f2d; border: 1px solid #334466; border-radius: 10px; padding: 12px 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); font-size: 12px; z-index: 100; min-width: 180px; max-width: 240px; pointer-events: none; }
+  .tooltip.visible { display: block; }
+  .tt-title { font-weight: bold; color: #90caf9; font-size: 13px; margin-bottom: 6px; border-bottom: 1px solid #334466; padding-bottom: 4px; }
+  .tt-row { color: #cfd8dc; line-height: 1.8; }
+  .tt-row span { color: white; font-weight: bold; }
+
+  /* Stats */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }
+  .stat { background: #0d1f2d; border-radius: 10px; padding: 12px 8px; text-align: center; border: 1px solid #334466; }
+  .stat-val { font-size: 18px; font-weight: 800; color: white; }
+  .stat-label { font-size: 10px; color: #78909c; margin-top: 2px; }
+
+  /* Legend */
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 14px; justify-content: center; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #b0bec5; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; flex-shrink: 0; }
+
+  /* CTA */
+  .cta { text-align: center; margin-top: 16px; padding: 12px; background: #0d1f2d; border-radius: 10px; border: 1px solid #334466; }
+  .cta a { color: #90caf9; text-decoration: none; font-size: 12px; }
+  .cta p { color: #78909c; font-size: 11px; margin-top: 4px; }
+
+  @media (max-width: 600px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .stage-name { font-size: 8px; }
+    .stage-info { display: none; }
+    h1 { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>CAMMINO BALTEO</h1>
+  <p class="subtitle">Plan B 15/10 &nbsp;·&nbsp; Vallee d'Aoste, Italie &nbsp;·&nbsp; 8 jours</p>
+
+  <div class="map-area">
+    <svg class="bg" viewBox="0 0 900 280" preserveAspectRatio="none">
+      <!-- Mountains -->
+      <polygon points="0,280 80,120 160,200 260,80 340,180 440,100 520,160 620,60 700,150 800,90 900,130 900,280" fill="rgba(30,60,100,0.5)"/>
+      <polygon points="0,280 60,160 130,220 220,110 310,200 400,130 480,180 580,90 660,170 760,110 860,150 900,120 900,280" fill="rgba(20,45,75,0.4)"/>
+      <!-- Snow -->
+      <polygon points="250,80 260,55 270,80" fill="rgba(255,255,255,0.5)"/>
+      <polygon points="430,100 440,72 450,100" fill="rgba(255,255,255,0.5)"/>
+      <polygon points="610,60 620,32 630,60" fill="rgba(255,255,255,0.6)"/>
+      <polygon points="790,90 800,62 810,90" fill="rgba(255,255,255,0.5)"/>
+      <!-- River -->
+      <path d="M0,240 Q225,230 450,242 Q675,254 900,245" stroke="#42a5f5" stroke-width="4" fill="none" opacity="0.5"/>
+      <text x="450" y="262" text-anchor="middle" font-size="11" fill="#64b5f6" font-style="italic" font-family="Arial">← Dora Baltea</text>
+    </svg>
+
+    <div class="connector" style="top:52%"></div>
+
+    <div class="stages-wrapper" id="stages">
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-val">8</div><div class="stat-label">Jours de trek</div></div>
+    <div class="stat"><div class="stat-val">~96km</div><div class="stat-label">Distance totale</div></div>
+    <div class="stat"><div class="stat-val">1500m</div><div class="stat-label">Altitude max</div></div>
+    <div class="stat"><div class="stat-val">~580€</div><div class="stat-label">Budget / personne</div></div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#1565c0"></div> Depart officiel</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#e53935"></div> Etape standard</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f57c00"></div> Etape incontournable</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#7b1fa2"></div> Bonus Skyway</div>
+  </div>
+
+  <div class="cta">
+    <a href="https://balteus.lovevda.it/fr/etapes" target="_blank">Carte officielle + GPX par etape &rarr; balteus.lovevda.it</a>
+    <p>Clique sur chaque etape pour les details</p>
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip">
+  <div class="tt-title" id="tt-title"></div>
+  <div id="tt-body"></div>
+</div>
+
+<script>
+const stages = [
+  { day:'J0', name:'Pont-Saint-\nMartin', info:'345m', color:'#1565c0',
+    details:{ dist:'Depart officiel', dur:'Arrivee par train depuis Turin (50min, ~7€)', alt:'345m', note:'Pont du Diable — pont romain 1er s. av. J.-C.' }},
+  { day:'J1', name:'Lillianes', info:'8,2km · 4h', color:'#e53935',
+    details:{ dist:'8,2 km', dur:'4h00', alt:'900m max', note:'Village de Perloz. Bonne mise en jambes.' }},
+  { day:'J2', name:'Fontainemore', info:'16,7km · 6h40', color:'#e53935',
+    details:{ dist:'16,7 km', dur:'6h40', alt:'1500m max', note:'La plus longue ! Partir tot. Panoramas alpins.' }},
+  { day:'J3', name:'Donnas\nvia Chemp', info:'14,6km · 4h50 ★', color:'#f57c00',
+    details:{ dist:'14,6 km', dur:'4h50', alt:'900m max', note:'ETAPE CULTE. Village de Chemp : musee en plein air, 1 seul habitant. Vignobles en terrasses.' }},
+  { day:'J4', name:'Arnad', info:'12,5km · 5h30', color:'#e53935',
+    details:{ dist:'12,5 km', dur:'5h30', alt:'1400m max', note:'Fortifications napoleoniennes. 2 chateaux Vallaise. Foret de chataigniers.' }},
+  { day:'J5', name:'Challand-\nSt-Victor', info:'12,8km · 5h30', color:'#e53935',
+    details:{ dist:'12,8 km', dur:'5h30', alt:'1400m max', note:'Anciens sentiers muletiers. Villages enfouis dans les forets.' }},
+  { day:'J6', name:'Verrayes\nLac de Villa', info:'~13km · ~5h ★', color:'#f57c00',
+    details:{ dist:'~13 km', dur:'~5h', alt:'~1400m max', note:'Lac de Villa en reserve naturelle. Ruines chateau Challant. Tres photogenique en octobre.' }},
+  { day:'J7', name:'La Magdeleine\nLac de Lod', info:'~10km · ~4h ★', color:'#f57c00',
+    details:{ dist:'~10 km', dur:'~4h', alt:'~1650m max', note:'Etape douce pour finir. Lac de Lod a Antey-Saint-Andre. Vue panoramique sur la vallee.' }},
+  { day:'J8', name:'Skyway\nMontebianco', info:'3466m — Vue Mont Blanc', color:'#7b1fa2',
+    details:{ dist:'Bonus', dur:'Telepher. depuis Courmayeur', alt:'3466m', note:'Vue directe Mont Blanc + Cervin. ~35€ AR. Cave Mont Blanc sur place.' }},
+];
+
+const container = document.getElementById('stages');
+const tooltip = document.getElementById('tooltip');
+
+stages.forEach((s, i) => {
+  const div = document.createElement('div');
+  div.className = 'stage';
+  div.innerHTML = `
+    <div class="stage-day">${s.day}</div>
+    <div class="stage-dot" style="background:${s.color}"></div>
+    <div class="stage-name">${s.name.replace('\n','<br>')}</div>
+    <div class="stage-info">${s.info}</div>
+  `;
+  div.addEventListener('mouseenter', (e) => {
+    document.getElementById('tt-title').textContent = s.day + ' — ' + s.name.replace('\n',' ');
+    document.getElementById('tt-body').innerHTML = `
+      <div class="tt-row">Distance : <span>${s.details.dist}</span></div>
+      <div class="tt-row">Duree : <span>${s.details.dur}</span></div>
+      <div class="tt-row">Altitude max : <span>${s.details.alt}</span></div>
+      <div class="tt-row" style="margin-top:6px;color:#90caf9">${s.details.note}</div>
+    `;
+    const rect = div.getBoundingClientRect();
+    let left = rect.left + rect.width/2 - 90;
+    left = Math.max(8, Math.min(left, window.innerWidth - 250));
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = (rect.bottom + 8) + 'px';
+    tooltip.classList.add('visible');
+  });
+  div.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+  div.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    div.dispatchEvent(new MouseEvent('mouseenter'));
+    setTimeout(() => tooltip.classList.remove('visible'), 3000);
+  });
+  container.appendChild(div);
+});
+</script>
+</body>
+</html>
