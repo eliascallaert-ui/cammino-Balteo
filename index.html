@@ -5,358 +5,647 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Plan B 15/10 — Cammino Balteo</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #1a2a3a; font-family: 'Segoe UI', Arial, sans-serif; min-height: 100vh; padding: 16px; }
-  .container { max-width: 900px; margin: 0 auto; }
-  h1 { text-align: center; color: white; font-size: 26px; margin-bottom: 4px; letter-spacing: 2px; }
-  .subtitle { text-align: center; color: #90caf9; font-size: 13px; margin-bottom: 20px; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #111e2b; font-family: 'Segoe UI', Arial, sans-serif; color: #cfd8dc; }
 
-  .map-area { position: relative; background: linear-gradient(180deg, #1e3a5f 0%, #243b55 50%, #2d5016 100%); border-radius: 16px; padding: 20px; overflow: hidden; min-height: 280px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+/* HERO */
+.hero { background: linear-gradient(160deg, #0d1f2d 0%, #1a3a5c 60%, #0d2a1a 100%); padding: 32px 16px 24px; text-align: center; border-bottom: 1px solid #1e3a5f; }
+.hero h1 { font-size: 32px; color: white; letter-spacing: 4px; font-weight: 900; }
+.hero .tagline { color: #90caf9; font-size: 13px; margin-top: 6px; letter-spacing: 1px; }
+.hero-flags { font-size: 22px; margin: 12px 0 6px; letter-spacing: 6px; }
+.hero-date { display: inline-block; background: #1565c0; color: white; font-size: 12px; font-weight: bold; padding: 5px 14px; border-radius: 20px; margin-top: 8px; letter-spacing: 1px; }
 
-  svg.bg { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* PROGRESS GLOBAL */
+.global-progress { background: #0d1f2d; padding: 16px; border-bottom: 1px solid #1e3a5f; }
+.gp-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+.gp-label { font-size: 11px; color: #78909c; white-space: nowrap; }
+.gp-bar-wrap { flex: 1; background: #162536; border-radius: 10px; height: 8px; overflow: hidden; }
+.gp-bar { height: 100%; background: linear-gradient(90deg, #1565c0, #43a047); border-radius: 10px; transition: width 0.4s; }
+.gp-pct { font-size: 12px; font-weight: bold; color: white; white-space: nowrap; }
 
-  .stages-wrapper { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 60px 10px 40px; gap: 4px; }
+.container { max-width: 900px; margin: 0 auto; padding: 20px 16px; }
 
-  .stage { display: flex; flex-direction: column; align-items: center; cursor: pointer; flex: 1; }
-  .stage-dot { width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.5); transition: transform 0.2s, box-shadow 0.2s; margin: 6px 0; }
-  .stage:hover .stage-dot { transform: scale(1.4); box-shadow: 0 4px 16px rgba(0,0,0,0.6); }
-  .stage-day { font-size: 9px; background: rgba(0,0,0,0.5); color: white; border-radius: 8px; padding: 2px 6px; font-weight: bold; }
-  .stage-name { font-size: 9px; font-weight: bold; color: white; text-align: center; margin-top: 4px; line-height: 1.3; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
-  .stage-info { font-size: 8px; color: #b0bec5; text-align: center; margin-top: 2px; line-height: 1.3; }
+/* MAP */
+.map-area { position: relative; background: linear-gradient(180deg, #1e3a5f 0%, #243b55 50%, #2d5016 100%); border-radius: 16px; padding: 20px; overflow: hidden; min-height: 260px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); margin-bottom: 16px; }
+svg.bg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.stages-wrapper { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 55px 10px 35px; gap: 2px; }
+.stage { display: flex; flex-direction: column; align-items: center; cursor: pointer; flex: 1; }
+.stage-dot { width: 18px; height: 18px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.5); transition: transform 0.2s; margin: 5px 0; }
+.stage:hover .stage-dot { transform: scale(1.5); }
+.stage-day { font-size: 8px; background: rgba(0,0,0,0.6); color: white; border-radius: 6px; padding: 2px 5px; font-weight: bold; }
+.stage-name { font-size: 8px; font-weight: bold; color: white; text-align: center; margin-top: 3px; line-height: 1.3; text-shadow: 0 1px 3px rgba(0,0,0,0.9); }
+.stage-km { font-size: 7px; color: #b0bec5; text-align: center; margin-top: 1px; }
+.connector { position: absolute; top: 50%; left: 20px; right: 20px; height: 2px; background: repeating-linear-gradient(90deg,#ef5350 0,#ef5350 8px,transparent 8px,transparent 14px); z-index: 1; transform: translateY(-50%); }
 
-  .connector { position: absolute; top: 50%; left: 20px; right: 20px; height: 2px; background: repeating-linear-gradient(90deg, #ef5350 0px, #ef5350 10px, transparent 10px, transparent 18px); z-index: 1; transform: translateY(-50%); }
+/* TOOLTIP */
+.tooltip { display: none; position: fixed; background: #0a1929; border: 1px solid #1e3a5f; border-radius: 10px; padding: 12px 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); font-size: 11px; z-index: 999; min-width: 190px; max-width: 240px; pointer-events: none; }
+.tooltip.visible { display: block; }
+.tt-title { font-weight: bold; color: #90caf9; font-size: 12px; margin-bottom: 5px; border-bottom: 1px solid #1e3a5f; padding-bottom: 4px; }
+.tt-row { color: #b0bec5; line-height: 1.8; }
+.tt-row span { color: white; font-weight: bold; }
+.tt-note { margin-top: 6px; color: #81d4fa; font-size: 10px; line-height: 1.4; }
 
-  /* Tooltip */
-  .tooltip { display: none; position: fixed; background: #0d1f2d; border: 1px solid #334466; border-radius: 10px; padding: 12px 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); font-size: 12px; z-index: 100; min-width: 180px; max-width: 240px; pointer-events: none; }
-  .tooltip.visible { display: block; }
-  .tt-title { font-weight: bold; color: #90caf9; font-size: 13px; margin-bottom: 6px; border-bottom: 1px solid #334466; padding-bottom: 4px; }
-  .tt-row { color: #cfd8dc; line-height: 1.8; }
-  .tt-row span { color: white; font-weight: bold; }
+/* STATS */
+.stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 16px; }
+.stat { background: #0d1f2d; border-radius: 10px; padding: 12px 8px; text-align: center; border: 1px solid #1e3a5f; }
+.stat-val { font-size: 18px; font-weight: 800; color: white; }
+.stat-label { font-size: 9px; color: #546e7a; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-  /* Stats */
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }
-  .stat { background: #0d1f2d; border-radius: 10px; padding: 12px 8px; text-align: center; border: 1px solid #334466; }
-  .stat-val { font-size: 18px; font-weight: 800; color: white; }
-  .stat-label { font-size: 10px; color: #78909c; margin-top: 2px; }
+/* SECTION TITLE */
+.section-title { margin: 28px 0 16px; }
+.section-title h2 { color: white; font-size: 16px; letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
+.section-title h2::after { content:''; flex:1; height:1px; background:#1e3a5f; }
+.section-sub { color: #546e7a; font-size: 11px; margin-top: 5px; }
+.section-sub strong { color: #ef9a9a; }
 
-  /* Legend */
-  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 14px; justify-content: center; }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #b0bec5; }
-  .legend-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; flex-shrink: 0; }
+/* ROLE CARDS */
+.roles-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
+.role-card { background: #0d1f2d; border-radius: 12px; padding: 0; border: 1px solid #1e3a5f; overflow: hidden; }
+.role-header { display: flex; align-items: center; gap: 10px; padding: 14px 16px 12px; border-bottom: 1px solid #1e3a5f; }
+.role-icon { font-size: 20px; flex-shrink: 0; }
+.role-meta { flex: 1; min-width: 0; }
+.role-title-text { color: white; font-weight: bold; font-size: 13px; }
 
-  /* CTA */
-  .cta { text-align: center; margin-top: 16px; padding: 12px; background: #0d1f2d; border-radius: 10px; border: 1px solid #334466; }
-  .cta a { color: #90caf9; text-decoration: none; font-size: 12px; }
-  .cta p { color: #78909c; font-size: 11px; margin-top: 4px; }
+/* EDITABLE NAME */
+.role-name-wrap { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+.role-name { font-size: 11px; color: #90caf9; font-weight: 600; cursor: pointer; border: none; background: transparent; outline: none; font-family: inherit; padding: 0; min-width: 60px; max-width: 150px; }
+.role-name::placeholder { color: #37474f; font-style: italic; }
+.role-name-hint { font-size: 9px; color: #37474f; cursor: pointer; }
+.role-name:focus { color: white; border-bottom: 1px dashed #1565c0; }
 
-  @media (max-width: 600px) {
-    .stats { grid-template-columns: repeat(2, 1fr); }
-    .stage-name { font-size: 8px; }
-    .stage-info { display: none; }
-    h1 { font-size: 20px; }
-  }
+/* PROGRESS BAR */
+.role-progress { padding: 8px 16px 0; }
+.rp-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.rp-bar-wrap { flex:1; background: #162536; border-radius: 6px; height: 5px; overflow: hidden; }
+.rp-bar { height: 100%; border-radius: 6px; transition: width 0.3s; background: linear-gradient(90deg,#1565c0,#43a047); }
+.rp-pct { font-size: 10px; color: #546e7a; white-space: nowrap; }
 
-  /* SECTION EQUIPE */
-  .section-title { text-align: center; margin: 32px 0 20px; }
-  .section-title h2 { color: white; font-size: 20px; letter-spacing: 2px; }
-  .section-sub { color: #78909c; font-size: 12px; margin-top: 6px; }
-  .section-sub strong { color: #ef9a9a; }
+/* TASKS */
+.role-tasks-wrap { padding: 4px 16px 12px; }
+.task-item { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; border-bottom: 1px solid #0f2030; }
+.task-item:last-child { border-bottom: none; }
+.task-cb { width: 15px; height: 15px; border: 2px solid #334466; border-radius: 4px; cursor: pointer; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; background: transparent; }
+.task-cb.checked { background: #1565c0; border-color: #1565c0; }
+.task-cb.checked::after { content: '✓'; font-size: 9px; color: white; }
+.task-text { font-size: 11px; color: #90a4ae; line-height: 1.5; flex: 1; cursor: pointer; transition: color 0.2s; }
+.task-text.checked { text-decoration: line-through; color: #37474f; }
+.task-text.preset { font-size: 11px; }
+.task-del { font-size: 14px; color: #37474f; cursor: pointer; flex-shrink: 0; line-height: 1; opacity: 0; transition: opacity 0.2s; }
+.task-item:hover .task-del { opacity: 1; }
 
-  .roles-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 20px; }
-  @media (max-width: 700px) { .roles-grid { grid-template-columns: 1fr; } }
+/* ADD TASK */
+.add-task-row { display: flex; gap: 6px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #1e3a5f; }
+.add-task-input { flex: 1; background: #162536; border: 1px solid #1e3a5f; border-radius: 6px; padding: 6px 10px; font-size: 11px; color: white; outline: none; font-family: inherit; }
+.add-task-input::placeholder { color: #37474f; }
+.add-task-input:focus { border-color: #1565c0; }
+.add-task-btn { background: #1565c0; border: none; border-radius: 6px; color: white; font-size: 16px; width: 28px; cursor: pointer; flex-shrink: 0; }
+.add-task-btn:hover { background: #1976d2; }
 
-  .role-card { background: #0d1f2d; border-radius: 12px; padding: 16px; border-left: 4px solid #334466; }
-  .role-nav { border-left-color: #1565c0; }
-  .role-hebergement { border-left-color: #2e7d32; }
-  .role-transport { border-left-color: #f57c00; }
-  .role-materiel { border-left-color: #6a1b9a; }
-  .role-food { border-left-color: #c62828; }
-  .role-secu { border-left-color: #00838f; }
+/* TRANSPORT SPECIAL */
+.transport-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; padding: 8px 16px; }
+.transport-item { background: #111e2b; border-radius: 8px; padding: 9px; border: 1px solid #1e3a5f; }
+.transport-from { font-size: 11px; font-weight: bold; color: white; margin-bottom: 3px; }
+.transport-detail { font-size: 10px; color: #78909c; line-height: 1.4; margin-bottom: 3px; }
+.transport-price { font-size: 10px; color: #80cbc4; font-weight: bold; }
 
-  .role-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-  .role-icon { font-size: 22px; }
-  .role-title { color: white; font-weight: bold; font-size: 13px; }
-  .role-person { color: #78909c; font-size: 11px; margin-top: 2px; }
-  .role-badge { margin-left: auto; font-size: 10px; padding: 3px 8px; border-radius: 20px; font-weight: bold; white-space: nowrap; }
-  .role-badge.done { background: #1b5e20; color: #a5d6a7; }
-  .role-badge.pending { background: #1a237e; color: #90caf9; }
+/* INFOS PRATIQUES */
+.info-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 4px; }
+.info-card { background: #0d1f2d; border-radius: 10px; padding: 14px; border: 1px solid #1e3a5f; }
+.info-card h4 { color: white; font-size: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.info-card ul { list-style: none; }
+.info-card ul li { font-size: 10px; color: #78909c; line-height: 1.8; padding-left: 10px; position: relative; }
+.info-card ul li::before { content: '›'; position: absolute; left: 0; color: #334466; }
+.info-card ul li strong { color: #cfd8dc; }
+.info-card a { color: #90caf9; text-decoration: none; }
+.emergency { border-left: 3px solid #c62828 !important; }
+.emergency h4 { color: #ef9a9a; }
 
-  .role-tasks { list-style: none; padding: 0; }
-  .role-tasks li { color: #b0bec5; font-size: 11px; line-height: 1.7; padding-left: 14px; position: relative; }
-  .role-tasks li::before { content: '›'; position: absolute; left: 0; color: #546e7a; }
-  .role-tasks li.done-task { color: #a5d6a7; }
-  .role-tasks li.done-task::before { content: '✓'; color: #4caf50; }
-  .role-tasks a { color: #90caf9; text-decoration: none; }
+/* BUDGET */
+.budget-box { background: #0d1f2d; border-radius: 12px; padding: 20px; border: 1px solid #1e3a5f; margin-top: 4px; }
+.budget-box h3 { color: white; font-size: 13px; margin-bottom: 14px; text-align: center; letter-spacing: 1px; text-transform: uppercase; }
+.budget-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+.budget-item { background: #111e2b; border-radius: 8px; padding: 10px 8px; text-align: center; border: 1px solid #162536; }
+.budget-item span { display: block; font-size: 9px; color: #546e7a; margin-bottom: 4px; text-transform: uppercase; }
+.budget-item strong { font-size: 13px; color: white; }
+.budget-item.total { background: #0d2a4a; border: 1px solid #1565c0; }
+.budget-item.total strong { color: #90caf9; font-size: 16px; }
+.budget-note { font-size: 10px; color: #37474f; text-align: center; margin-top: 10px; }
 
-  /* BUDGET */
-  .budget-box { background: #0d1f2d; border-radius: 12px; padding: 20px; border: 1px solid #334466; margin-top: 4px; }
-  .budget-box h3 { color: white; font-size: 14px; margin-bottom: 14px; text-align: center; letter-spacing: 1px; }
-  .budget-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-  @media (max-width: 700px) { .budget-grid { grid-template-columns: repeat(2, 1fr); } }
-  .budget-item { background: #162536; border-radius: 8px; padding: 10px; text-align: center; }
-  .budget-item span { display: block; font-size: 10px; color: #78909c; margin-bottom: 4px; }
-  .budget-item strong { font-size: 14px; color: white; }
-  .budget-item.total { background: #1a3a5c; border: 1px solid #1565c0; }
-  .budget-item.total strong { color: #90caf9; font-size: 16px; }
+/* FOOTER */
+.footer { text-align: center; padding: 20px; font-size: 10px; color: #263238; border-top: 1px solid #0d1f2d; margin-top: 20px; }
+.footer a { color: #37474f; }
+
+/* RESPONSIVE */
+@media (max-width: 650px) {
+  .roles-grid { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: repeat(2,1fr); }
+  .info-grid { grid-template-columns: 1fr; }
+  .budget-grid { grid-template-columns: repeat(2,1fr); }
+  .transport-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 24px; }
+  .stage-km { display: none; }
+}
 </style>
 </head>
 <body>
-<div class="container">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-flags">🇧🇪🇫🇷🇨🇭🇲🇦</div>
   <h1>CAMMINO BALTEO</h1>
-  <p class="subtitle">Plan B 15/10 &nbsp;·&nbsp; Vallee d'Aoste, Italie &nbsp;·&nbsp; 8 jours</p>
+  <p class="tagline">Plan B 15/10 &nbsp;·&nbsp; Vallee d'Aoste, Italie &nbsp;·&nbsp; 8 aventuriers, 4 pays, 1 trek</p>
+  <div class="hero-date">15 – 23 Octobre 2026</div>
+</div>
 
+<!-- PROGRESSION GLOBALE -->
+<div class="global-progress">
+  <div class="gp-inner">
+    <span class="gp-label">Progression organisation</span>
+    <div class="gp-bar-wrap"><div class="gp-bar" id="gp-bar" style="width:0%"></div></div>
+    <span class="gp-pct" id="gp-pct">0%</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- MAP -->
+  <div class="section-title" style="margin-top:8px">
+    <h2>Itineraire</h2>
+    <p class="section-sub">Hover sur chaque etape pour les details &nbsp;·&nbsp; GPX disponibles sur balteus.lovevda.it</p>
+  </div>
   <div class="map-area">
-    <svg class="bg" viewBox="0 0 900 280" preserveAspectRatio="none">
-      <!-- Mountains -->
-      <polygon points="0,280 80,120 160,200 260,80 340,180 440,100 520,160 620,60 700,150 800,90 900,130 900,280" fill="rgba(30,60,100,0.5)"/>
-      <polygon points="0,280 60,160 130,220 220,110 310,200 400,130 480,180 580,90 660,170 760,110 860,150 900,120 900,280" fill="rgba(20,45,75,0.4)"/>
-      <!-- Snow -->
-      <polygon points="250,80 260,55 270,80" fill="rgba(255,255,255,0.5)"/>
-      <polygon points="430,100 440,72 450,100" fill="rgba(255,255,255,0.5)"/>
-      <polygon points="610,60 620,32 630,60" fill="rgba(255,255,255,0.6)"/>
-      <polygon points="790,90 800,62 810,90" fill="rgba(255,255,255,0.5)"/>
-      <!-- River -->
-      <path d="M0,240 Q225,230 450,242 Q675,254 900,245" stroke="#42a5f5" stroke-width="4" fill="none" opacity="0.5"/>
-      <text x="450" y="262" text-anchor="middle" font-size="11" fill="#64b5f6" font-style="italic" font-family="Arial">← Dora Baltea</text>
+    <svg class="bg" viewBox="0 0 900 260" preserveAspectRatio="none">
+      <polygon points="0,260 80,110 160,190 260,70 340,170 440,90 520,150 620,50 700,140 800,80 900,120 900,260" fill="rgba(30,60,100,0.5)"/>
+      <polygon points="0,260 60,150 130,210 220,100 310,190 400,120 480,170 580,80 660,160 760,100 860,140 900,110 900,260" fill="rgba(20,45,75,0.4)"/>
+      <polygon points="250,70 260,45 270,70" fill="rgba(255,255,255,0.5)"/>
+      <polygon points="430,90 440,62 450,90" fill="rgba(255,255,255,0.5)"/>
+      <polygon points="610,50 620,22 630,50" fill="rgba(255,255,255,0.6)"/>
+      <polygon points="790,80 800,52 810,80" fill="rgba(255,255,255,0.5)"/>
+      <path d="M0,230 Q225,220 450,232 Q675,244 900,235" stroke="#42a5f5" stroke-width="3" fill="none" opacity="0.4"/>
+      <text x="450" y="250" text-anchor="middle" font-size="10" fill="#64b5f6" font-style="italic" font-family="Arial">Dora Baltea</text>
     </svg>
-
-    <div class="connector" style="top:52%"></div>
-
-    <div class="stages-wrapper" id="stages">
-    </div>
+    <div class="connector" style="top:51%"></div>
+    <div class="stages-wrapper" id="stages"></div>
   </div>
 
+  <!-- STATS -->
   <div class="stats">
     <div class="stat"><div class="stat-val">8</div><div class="stat-label">Jours de trek</div></div>
     <div class="stat"><div class="stat-val">~96km</div><div class="stat-label">Distance totale</div></div>
-    <div class="stat"><div class="stat-val">1500m</div><div class="stat-label">Altitude max</div></div>
-    <div class="stat"><div class="stat-val">~580€</div><div class="stat-label">Budget / personne</div></div>
+    <div class="stat"><div class="stat-val">1650m</div><div class="stat-label">Altitude max</div></div>
+    <div class="stat"><div class="stat-val">8</div><div class="stat-label">Aventuriers</div></div>
   </div>
 
-  <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:#1565c0"></div> Depart officiel</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#e53935"></div> Etape standard</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#f57c00"></div> Etape incontournable</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#7b1fa2"></div> Bonus Skyway</div>
-  </div>
-
-  <div class="cta">
-    <a href="https://balteus.lovevda.it/fr/etapes" target="_blank">Carte officielle + GPX par etape &rarr; balteus.lovevda.it</a>
-    <p>Clique sur chaque etape pour les details</p>
-  </div>
-
-  <!-- SECTION EQUIPE -->
+  <!-- EQUIPE -->
   <div class="section-title">
     <h2>Equipe &amp; Missions</h2>
-    <p class="section-sub">Chacun son role, tout le monde doit rendre ses comptes avant le <strong>1er octobre</strong></p>
+    <p class="section-sub">Clique sur ton nom pour le modifier · Coche tes taches au fur et a mesure · Ajoute tes propres notes · <strong>Deadline generale : 1er septembre</strong></p>
+  </div>
+  <div class="roles-grid" id="roles-grid"></div>
+
+  <!-- INFOS PRATIQUES -->
+  <div class="section-title">
+    <h2>Infos Pratiques</h2>
+  </div>
+  <div class="info-grid">
+    <div class="info-card emergency">
+      <h4>🚨 Urgences</h4>
+      <ul>
+        <li><strong>112</strong> — Urgences generales (EU)</li>
+        <li><strong>118</strong> — Soccorso Alpino (montagne)</li>
+        <li><strong>113</strong> — Police italienne</li>
+        <li>Sauvetage helitreuille possible jusqu'a 1650m</li>
+        <li>Signaler position GPS si appel 118</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h4>📋 Documents obligatoires</h4>
+      <ul>
+        <li>Carte d'identite ou passeport valide</li>
+        <li><strong>CEAM</strong> (Carte Europeenne AM) — UE uniquement</li>
+        <li>Marocains : passeport + assurance voyage</li>
+        <li>Assurance rapatriement recommandee pour tous</li>
+        <li>Numero de groupe assurance note quelque part</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h4>🌤 Meteo octobre</h4>
+      <ul>
+        <li>Temperatures : 5–15°C en journee</li>
+        <li>Nuits fraiches : 0–5°C en altitude</li>
+        <li>Foliage = couleurs magnifiques garanties</li>
+        <li>Risque pluie moderé — veste imperméable obligatoire</li>
+        <li>Neige possible au-dessus de 2000m (hors itineraire)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h4>🚂 Arriver sur place</h4>
+      <ul>
+        <li>Hub principal : <strong>Turin Porta Nuova (TRN)</strong></li>
+        <li>Hub alternatif : <strong>Geneve (GVA)</strong> + train ~3h30</li>
+        <li>Train Turin → Pont-Saint-Martin : ~50 min, ~7 EUR</li>
+        <li>RDV : <strong>Pont-Saint-Martin le 15/10 avant 18h</strong></li>
+        <li>Retour J8 : bus Courmayeur → Turin (~2h, ~15 EUR)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h4>✈️ Vols par ville</h4>
+      <ul>
+        <li>🇧🇪 <strong>Bruxelles</strong> : BRU→TRN ou BRU→GVA (~60–100 EUR)</li>
+        <li>🇫🇷 <strong>Paris</strong> : CDG→TRN EasyJet ou TGV (~50–90 EUR)</li>
+        <li>🇨🇭 <strong>Bale</strong> : BSL→TRN ou train via Geneve (~80–120 EUR)</li>
+        <li>🇲🇦 <strong>Maroc</strong> : CMN/RAK via Paris/Madrid (~150–250 EUR)</li>
+        <li>Comparer : <a href="https://www.skyscanner.fr" target="_blank">Skyscanner</a> · <a href="https://www.google.com/flights" target="_blank">Google Flights</a></li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h4>🔗 Liens utiles</h4>
+      <ul>
+        <li><a href="https://balteus.lovevda.it/fr/etapes" target="_blank">balteus.lovevda.it</a> — GPX + carte officielle</li>
+        <li><a href="https://www.lovevda.it" target="_blank">lovevda.it</a> — Hebergements Vallee d'Aoste</li>
+        <li><a href="https://www.trenitalia.com" target="_blank">trenitalia.com</a> — Trains italiens</li>
+        <li><a href="https://www.skywaymontebianco.com" target="_blank">skywaymontebianco.com</a> — Skyway</li>
+        <li><a href="https://www.meteoblue.com" target="_blank">meteoblue.com</a> — Meteo montagne</li>
+      </ul>
+    </div>
   </div>
 
-  <div class="roles-grid">
-
-    <div class="role-card role-nav">
-      <div class="role-header">
-        <span class="role-icon">🧭</span>
-        <div>
-          <div class="role-title">Navigation</div>
-          <div class="role-person">Elias</div>
-        </div>
-        <span class="role-badge done">Actif</span>
-      </div>
-      <ul class="role-tasks">
-        <li class="done-task">Itineraire Cammino Balteo selectionne</li>
-        <li class="done-task">8 etapes planifiees (96km, 8 jours)</li>
-        <li>Telecharger les GPX sur <a href="https://balteus.lovevda.it/fr/etapes" target="_blank">balteus.lovevda.it</a></li>
-        <li>Briefing quotidien chaque matin sur le terrain</li>
-        <li>Application Maps.me ou Gaia GPS (offline obligatoire)</li>
-        <li>Point meteo 48h avant depart</li>
-      </ul>
-    </div>
-
-    <div class="role-card role-hebergement">
-      <div class="role-header">
-        <span class="role-icon">🏠</span>
-        <div>
-          <div class="role-title">Hebergement</div>
-          <div class="role-person">A definir</div>
-        </div>
-        <span class="role-badge pending">En cours</span>
-      </div>
-      <ul class="role-tasks">
-        <li>Reserver <strong>avant fin aout</strong> (octobre = haute saison foliage)</li>
-        <li>J1 — Lillianes : B&amp;B ou chambre chez habitant</li>
-        <li>J2 — Fontainemore : rifugio ou gite</li>
-        <li>J3 — Donnas : hotel ou B&amp;B</li>
-        <li>J4 — Arnad : chambre d'hotes</li>
-        <li>J5 — Challand-Saint-Victor : rifugio</li>
-        <li>J6 — Verrayes : gite ou B&amp;B</li>
-        <li>J7 — La Magdeleine / Antey : hotel</li>
-        <li>Budget prevu : ~210 EUR/personne (8 nuits)</li>
-        <li>Site utile : <a href="https://www.lovevda.it" target="_blank">lovevda.it</a> &amp; Booking.com</li>
-      </ul>
-    </div>
-
-    <div class="role-card role-transport">
-      <div class="role-header">
-        <span class="role-icon">✈️</span>
-        <div>
-          <div class="role-title">Transport</div>
-          <div class="role-person">A definir</div>
-        </div>
-        <span class="role-badge pending">En cours</span>
-      </div>
-      <ul class="role-tasks">
-        <li>Vol <strong>Bruxelles (BRU) → Turin (TRN)</strong></li>
-        <li>Alternatives : Bruxelles → Geneve ou Milan</li>
-        <li>Date aller : <strong>15 octobre 2026</strong></li>
-        <li>Train Turin Porta Nuova → Pont-Saint-Martin (~50 min, ~7 EUR)</li>
-        <li>Retour depuis Courmayeur → Turin en bus (~2h, ~15 EUR)</li>
-        <li>Comparer sur Skyscanner — viser vol matin le 15</li>
-        <li>Budget vol : ~50–100 EUR/personne A/R</li>
-      </ul>
-    </div>
-
-    <div class="role-card role-materiel">
-      <div class="role-header">
-        <span class="role-icon">🎒</span>
-        <div>
-          <div class="role-title">Materiel</div>
-          <div class="role-person">A definir</div>
-        </div>
-        <span class="role-badge pending">A faire</span>
-      </div>
-      <ul class="role-tasks">
-        <li>Checker que tout le monde a des <strong>chaussures de rando</strong> (obligatoire)</li>
-        <li>Sac a dos 30-40L par personne</li>
-        <li>Battons de marche (optionnel mais conseille)</li>
-        <li>Veste de pluie + couche chaud (octobre = fraicheur en altitude)</li>
-        <li>Lampe frontale, trousse de secours basique</li>
-        <li>Cremes solaire + anti-ampoules</li>
-        <li>Pas besoin de tente (hebergement chaque soir)</li>
-        <li>Faire un inventaire groupe avant depart</li>
-      </ul>
-    </div>
-
-    <div class="role-card role-food">
-      <div class="role-header">
-        <span class="role-icon">🍕</span>
-        <div>
-          <div class="role-title">Nourriture</div>
-          <div class="role-person">A definir</div>
-        </div>
-        <span class="role-badge pending">A planifier</span>
-      </div>
-      <ul class="role-tasks">
-        <li>Repas du soir : dans les refuges/restaurants (~20-25 EUR/repas)</li>
-        <li>Petit-dej : inclus dans la plupart des hebergements</li>
-        <li>Lunch : a preparer chaque matin (sandwiches, fruits)</li>
-        <li>Snacks pour les etapes : barres, fruits secs, chocolat</li>
-        <li>Prevoir 1L-2L d'eau par personne (sources sur le chemin)</li>
-        <li>Budget repas : ~200 EUR/personne sur 8 jours</li>
-        <li>Regimes particuliers ? Faire un sondage au groupe</li>
-      </ul>
-    </div>
-
-    <div class="role-card role-secu">
-      <div class="role-header">
-        <span class="role-icon">🚑</span>
-        <div>
-          <div class="role-title">Securite</div>
-          <div class="role-person">A definir</div>
-        </div>
-        <span class="role-badge pending">A preparer</span>
-      </div>
-      <ul class="role-tasks">
-        <li>Urgences Italie : <strong>112</strong> (police + SAMU)</li>
-        <li>Secours montagne : <strong>118</strong> (Soccorso Alpino)</li>
-        <li>Verifier assurance rapatriement de chacun</li>
-        <li>Carte europeenne d'assurance maladie (CEAM) obligatoire</li>
-        <li>Partager itineraire avec un proche reste en Belgique</li>
-        <li>1 trousse de secours pour le groupe minimum</li>
-        <li>Medicaments perso : anti-douleur, pansements, anti-ampoules</li>
-      </ul>
-    </div>
-
+  <!-- BUDGET -->
+  <div class="section-title">
+    <h2>Budget Estimatif</h2>
+    <p class="section-sub">Par personne — vols variables selon ville de depart</p>
   </div>
-
-  <!-- BUDGET RECAP -->
   <div class="budget-box">
-    <h3>Budget estimatif total</h3>
     <div class="budget-grid">
-      <div class="budget-item"><span>Vol A/R</span><strong>~75 EUR</strong></div>
-      <div class="budget-item"><span>Train Turin → PSM</span><strong>~7 EUR</strong></div>
-      <div class="budget-item"><span>Bus retour Courmayeur</span><strong>~15 EUR</strong></div>
-      <div class="budget-item"><span>Hebergement (8 nuits)</span><strong>~210 EUR</strong></div>
+      <div class="budget-item"><span>Vol A/R</span><strong>50–250 EUR</strong></div>
+      <div class="budget-item"><span>Train local</span><strong>~22 EUR</strong></div>
+      <div class="budget-item"><span>Hebergement (7 nuits)</span><strong>~210 EUR</strong></div>
       <div class="budget-item"><span>Repas (8 jours)</span><strong>~200 EUR</strong></div>
       <div class="budget-item"><span>Skyway Montebianco</span><strong>~35 EUR</strong></div>
       <div class="budget-item"><span>Divers / imprevu</span><strong>~50 EUR</strong></div>
-      <div class="budget-item total"><span>TOTAL</span><strong>~590 EUR</strong></div>
+      <div class="budget-item total" style="grid-column:span 2"><span>TOTAL EUROPE</span><strong>~520–570 EUR</strong></div>
+      <div class="budget-item total" style="grid-column:span 2; background:#1a2a1a; border-color:#2e7d32"><span>TOTAL MAROC</span><strong>~620–720 EUR</strong></div>
     </div>
+    <p class="budget-note">* Hebergement : reserver avant fin aout, octobre = forte demande (foliage). Budget repas base sur ~25 EUR/soir en rifugio + lunch 10 EUR + snacks.</p>
   </div>
 
 </div>
 
+<!-- TOOLTIP -->
 <div class="tooltip" id="tooltip">
   <div class="tt-title" id="tt-title"></div>
   <div id="tt-body"></div>
 </div>
 
+<!-- FOOTER -->
+<div class="footer">
+  Plan B 15/10 &nbsp;·&nbsp; Cammino Balteo, Vallee d'Aoste &nbsp;·&nbsp; Navigation : Elias Callaert &nbsp;·&nbsp;
+  <a href="https://balteus.lovevda.it/fr/etapes" target="_blank">Site officiel du trek</a>
+</div>
+
 <script>
-const stages = [
-  { day:'J0', name:'Pont-Saint-\nMartin', info:'345m', color:'#1565c0',
-    details:{ dist:'Depart officiel', dur:'Arrivee par train depuis Turin (50min, ~7€)', alt:'345m', note:'Pont du Diable — pont romain 1er s. av. J.-C.' }},
-  { day:'J1', name:'Lillianes', info:'8,2km · 4h', color:'#e53935',
-    details:{ dist:'8,2 km', dur:'4h00', alt:'900m max', note:'Village de Perloz. Bonne mise en jambes.' }},
-  { day:'J2', name:'Fontainemore', info:'16,7km · 6h40', color:'#e53935',
-    details:{ dist:'16,7 km', dur:'6h40', alt:'1500m max', note:'La plus longue ! Partir tot. Panoramas alpins.' }},
-  { day:'J3', name:'Donnas\nvia Chemp', info:'14,6km · 4h50 ★', color:'#f57c00',
-    details:{ dist:'14,6 km', dur:'4h50', alt:'900m max', note:'ETAPE CULTE. Village de Chemp : musee en plein air, 1 seul habitant. Vignobles en terrasses.' }},
-  { day:'J4', name:'Arnad', info:'12,5km · 5h30', color:'#e53935',
-    details:{ dist:'12,5 km', dur:'5h30', alt:'1400m max', note:'Fortifications napoleoniennes. 2 chateaux Vallaise. Foret de chataigniers.' }},
-  { day:'J5', name:'Challand-\nSt-Victor', info:'12,8km · 5h30', color:'#e53935',
-    details:{ dist:'12,8 km', dur:'5h30', alt:'1400m max', note:'Anciens sentiers muletiers. Villages enfouis dans les forets.' }},
-  { day:'J6', name:'Verrayes\nLac de Villa', info:'~13km · ~5h ★', color:'#f57c00',
-    details:{ dist:'~13 km', dur:'~5h', alt:'~1400m max', note:'Lac de Villa en reserve naturelle. Ruines chateau Challant. Tres photogenique en octobre.' }},
-  { day:'J7', name:'La Magdeleine\nLac de Lod', info:'~10km · ~4h ★', color:'#f57c00',
-    details:{ dist:'~10 km', dur:'~4h', alt:'~1650m max', note:'Etape douce pour finir. Lac de Lod a Antey-Saint-Andre. Vue panoramique sur la vallee.' }},
-  { day:'J8', name:'Skyway\nMontebianco', info:'3466m — Vue Mont Blanc', color:'#7b1fa2',
-    details:{ dist:'Bonus', dur:'Telepher. depuis Courmayeur', alt:'3466m', note:'Vue directe Mont Blanc + Cervin. ~35€ AR. Cave Mont Blanc sur place.' }},
+// ===================== DATA =====================
+const stagesData = [
+  {day:'J0', name:'Pont-Saint-Martin', km:'Depart', color:'#1565c0', details:{dist:'Point de depart officiel',dur:'Arrivee par train depuis Turin (50 min, ~7 EUR)',alt:'345m',note:'Pont du Diable — pont romain du 1er s. av. J.-C. Ville medievale.'}},
+  {day:'J1', name:'Lillianes', km:'8km/4h', color:'#e53935', details:{dist:'8,2 km',dur:'4h00',alt:'900m max',note:'Premiere etape tranquille. Village de Perloz. Mise en jambes ideale.'}},
+  {day:'J2', name:'Fontainemore', km:'17km/6h40', color:'#e53935', details:{dist:'16,7 km',dur:'6h40',alt:'1500m max',note:'La plus longue ! Partir tot. Beaux panoramas alpins tout du long.'}},
+  {day:'J3', name:'Donnas / Chemp', km:'15km/4h50', color:'#f57c00', details:{dist:'14,6 km',dur:'4h50',alt:'900m max',note:'ETAPE CULTE. Village de Chemp : 1 seul habitant, musee en plein air. Vignobles en terrasses majestueuses.'}},
+  {day:'J4', name:'Arnad', km:'13km/5h30', color:'#e53935', details:{dist:'12,5 km',dur:'5h30',alt:'1400m max',note:'Fortifications napoleoniennes. 2 chateaux Vallaise. Foret de chataigniers.'}},
+  {day:'J5', name:'Challand-St-Victor', km:'13km/5h30', color:'#e53935', details:{dist:'12,8 km',dur:'5h30',alt:'1400m max',note:'Anciens sentiers muletiers historiques. Villages enfouis dans les forets.'}},
+  {day:'J6', name:'Verrayes / Lac Villa', km:'~13km/~5h', color:'#f57c00', details:{dist:'~13 km',dur:'~5h',alt:'~1400m',note:'Lac de Villa en reserve naturelle. Ruines chateau Challant. Foliage octobre = panorama de fou.'}},
+  {day:'J7', name:'La Magdeleine / Lac Lod', km:'~10km/~4h', color:'#f57c00', details:{dist:'~10 km',dur:'~4h',alt:'~1650m',note:'Etape douce pour savourer. Lac de Lod a Antey-Saint-Andre. Vue panoramique sur toute la vallee.'}},
+  {day:'J8', name:'Skyway Montebianco', km:'Bonus', color:'#7b1fa2', details:{dist:'Bonus final',dur:'Telepherique depuis Courmayeur (~35 EUR)',alt:'3466m',note:'Vue directe sur le Mont Blanc et le Cervin. Cave du Mont Blanc sur place. Le clou du spectacle.'}}
 ];
 
-const container = document.getElementById('stages');
+const rolesData = [
+  {
+    id: 'chef',
+    icon: '👑',
+    title: 'Chef de Projet',
+    color: '#f9a825',
+    defaultName: 'Amine Bounadi',
+    tasks: [
+      'Confirmer la liste des 8 participants avant fin juillet',
+      'Coordonner les 5 responsables et suivre les avancees',
+      'Fixer les deadlines officielles (partager ce lien au groupe)',
+      'Organiser 1 appel groupe en septembre pour point complet',
+      'Gerer les impondérables et arbitrages de derniere minute',
+      "S'assurer que tout le monde a son assurance et sa CEAM",
+      'Creer un pot commun pour les depenses partagees (Tricount ?)'
+    ]
+  },
+  {
+    id: 'transport',
+    icon: '✈️🏠',
+    title: 'Transport & Hebergements',
+    color: '#f57c00',
+    defaultName: '',
+    tasks: [
+      'Reserver hebergements avant fin aout (haute saison foliage !)',
+      'J1 Lillianes — B&B ou chambre chez habitant',
+      'J2 Fontainemore — rifugio ou gite',
+      'J3 Donnas — hotel ou B&B',
+      'J4 Arnad — chambre d\'hotes',
+      'J5 Challand-Saint-Victor — rifugio',
+      'J6 Verrayes — gite ou B&B',
+      'J7 La Magdeleine / Antey — hotel',
+      'Coordonner arrivees des 4 groupes a Turin le 15/10',
+      'Prevoir transfert gare Turin → Pont-Saint-Martin (train ~50min)',
+      'Organiser retour J8 Courmayeur → Turin (bus ~2h ~15EUR)',
+      'Partager infos transport specifiques a chaque participant'
+    ]
+  },
+  {
+    id: 'nav',
+    icon: '🧭',
+    title: 'Navigation',
+    color: '#1565c0',
+    defaultName: 'Elias Callaert',
+    tasks: [
+      'Itineraire Cammino Balteo selectionne ✓',
+      '8 etapes planifiees (96km, 8 jours) ✓',
+      'Site de reference identifie : balteus.lovevda.it ✓',
+      'Telecharger GPX de chaque etape avant depart',
+      'Installer appli GPS offline (Maps.me ou Gaia GPS)',
+      'Briefing oral chaque matin avant le depart de l\'etape',
+      'Point meteo 48h avant depart + veille quotidienne sur place',
+      'Prevoir plan B en cas de meteo defavorable sur une etape',
+      'Partager trace GPX a tout le monde sur les telephones'
+    ]
+  },
+  {
+    id: 'materiel',
+    icon: '🎒🍕',
+    title: 'Materiel & Nourriture',
+    color: '#6a1b9a',
+    defaultName: '',
+    tasks: [
+      'Envoyer checklist materiel complete au groupe avant septembre',
+      'Verifier chaussures de rando impermeables pour tous (OBLIGATOIRE)',
+      'Sac a dos 30-40L — un par personne',
+      'Veste de pluie + couche chaude (0-5°C la nuit en altitude)',
+      'Batons de marche (fortement conseilles)',
+      'Lampe frontale + anti-ampoules + creme solaire',
+      'Confirmer : pas de tente (hebergement chaque soir)',
+      'Inventaire groupe : qui a quoi, eviter les doublons',
+      'Sondage regimes alimentaires au groupe (halal etc.)',
+      'Organiser les lunches : preparation chaque matin',
+      'Snacks pour les etapes : barres, fruits secs, fruits frais',
+      'Budget repas : prevoir ~200 EUR/personne pour 8 jours'
+    ]
+  },
+  {
+    id: 'secu',
+    icon: '🚑',
+    title: 'Securite',
+    color: '#00838f',
+    defaultName: 'Ismail Alami',
+    tasks: [
+      'Urgences : 112 (general) — 118 Soccorso Alpino (montagne)',
+      'Verifier que chacun a une assurance rapatriement valide',
+      'CEAM obligatoire pour les ressortissants europeens',
+      'Marocains : assurance voyage internationale a souscrire',
+      'Partager itineraire complet avec un proche reste au pays',
+      'Preparer 1 trousse de secours groupe (pour 8 personnes)',
+      'Rappel : medicaments perso = chacun est responsable des siens',
+      'Protocole si blessure grave : appel 118 + point GPS + rester groupe',
+      'Altitude max ~1650m : pas de risque altitude severe, OK pour debutants',
+      'Rappel securite ampoules : cremes preventives des J1'
+    ]
+  }
+];
+
+// ===================== STATE =====================
+const STORAGE_KEY = 'balteo_v2';
+let state = {};
+try { state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) { state = {}; }
+
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function getRole(id) {
+  if (!state[id]) state[id] = { name: '', tasks: {}, custom: [] };
+  return state[id];
+}
+
+// ===================== MAP =====================
+const stagesEl = document.getElementById('stages');
 const tooltip = document.getElementById('tooltip');
 
-stages.forEach((s, i) => {
+stagesData.forEach(s => {
   const div = document.createElement('div');
   div.className = 'stage';
-  div.innerHTML = `
-    <div class="stage-day">${s.day}</div>
-    <div class="stage-dot" style="background:${s.color}"></div>
-    <div class="stage-name">${s.name.replace('\n','<br>')}</div>
-    <div class="stage-info">${s.info}</div>
-  `;
-  div.addEventListener('mouseenter', (e) => {
-    document.getElementById('tt-title').textContent = s.day + ' — ' + s.name.replace('\n',' ');
-    document.getElementById('tt-body').innerHTML = `
-      <div class="tt-row">Distance : <span>${s.details.dist}</span></div>
-      <div class="tt-row">Duree : <span>${s.details.dur}</span></div>
-      <div class="tt-row">Altitude max : <span>${s.details.alt}</span></div>
-      <div class="tt-row" style="margin-top:6px;color:#90caf9">${s.details.note}</div>
-    `;
+  div.innerHTML = `<div class="stage-day">${s.day}</div><div class="stage-dot" style="background:${s.color}"></div><div class="stage-name">${s.name}</div><div class="stage-km">${s.km}</div>`;
+  div.addEventListener('mouseenter', () => {
+    document.getElementById('tt-title').textContent = s.day + ' — ' + s.name;
+    document.getElementById('tt-body').innerHTML =
+      `<div class="tt-row">Distance : <span>${s.details.dist}</span></div>` +
+      `<div class="tt-row">Duree : <span>${s.details.dur}</span></div>` +
+      `<div class="tt-row">Altitude : <span>${s.details.alt}</span></div>` +
+      `<div class="tt-note">${s.details.note}</div>`;
     const rect = div.getBoundingClientRect();
-    let left = rect.left + rect.width/2 - 90;
+    let left = rect.left + rect.width / 2 - 95;
     left = Math.max(8, Math.min(left, window.innerWidth - 250));
     tooltip.style.left = left + 'px';
     tooltip.style.top = (rect.bottom + 8) + 'px';
     tooltip.classList.add('visible');
   });
   div.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
-  div.addEventListener('touchstart', (e) => {
+  div.addEventListener('touchstart', e => {
     e.preventDefault();
     div.dispatchEvent(new MouseEvent('mouseenter'));
     setTimeout(() => tooltip.classList.remove('visible'), 3000);
   });
-  container.appendChild(div);
+  stagesEl.appendChild(div);
 });
+
+// ===================== ROLES =====================
+function updateGlobalProgress() {
+  let total = 0, done = 0;
+  rolesData.forEach(role => {
+    const rs = getRole(role.id);
+    role.tasks.forEach((_, i) => { total++; if (rs.tasks[i]) done++; });
+    (rs.custom || []).forEach((t, i) => { total++; if (t.done) done++; });
+  });
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('gp-bar').style.width = pct + '%';
+  document.getElementById('gp-pct').textContent = pct + '%';
+}
+
+function updateRoleProgress(role, container) {
+  const rs = getRole(role.id);
+  let total = role.tasks.length + (rs.custom || []).length;
+  let done = 0;
+  role.tasks.forEach((_, i) => { if (rs.tasks[i]) done++; });
+  (rs.custom || []).forEach(t => { if (t.done) done++; });
+  const pct = total ? Math.round(done / total * 100) : 0;
+  const bar = container.querySelector('.rp-bar');
+  const pctEl = container.querySelector('.rp-pct');
+  if (bar) bar.style.width = pct + '%';
+  if (pctEl) pctEl.textContent = done + '/' + total + ' taches';
+}
+
+function renderRole(role) {
+  const rs = getRole(role.id);
+  const card = document.createElement('div');
+  card.className = 'role-card';
+  card.style.borderTop = '3px solid ' + role.color;
+
+  // HEADER
+  const nameVal = rs.name || role.defaultName || '';
+  const nameHint = (!rs.name && !role.defaultName) ? 'Clique pour ajouter ton nom' : (rs.name ? '' : 'Clique pour modifier');
+  card.innerHTML = `
+    <div class="role-header">
+      <span class="role-icon">${role.icon}</span>
+      <div class="role-meta">
+        <div class="role-title-text">${role.title}</div>
+        <div class="role-name-wrap">
+          <input class="role-name" data-role="${role.id}" type="text" maxlength="30"
+            value="${nameVal}" placeholder="Ton prenom / nom" title="Clique pour modifier le responsable"/>
+          <span class="role-name-hint">${!rs.name && role.defaultName ? '' : '✏️'}</span>
+        </div>
+      </div>
+    </div>
+    <div class="role-progress">
+      <div class="rp-row">
+        <div class="rp-bar-wrap"><div class="rp-bar" style="width:0%"></div></div>
+        <span class="rp-pct">0/0 taches</span>
+      </div>
+    </div>
+    <div class="role-tasks-wrap" id="tasks-${role.id}"></div>
+  `;
+
+  // NAME INPUT
+  const nameInput = card.querySelector('.role-name');
+  nameInput.addEventListener('change', () => {
+    getRole(role.id).name = nameInput.value.trim();
+    saveState();
+  });
+
+  // TASKS CONTAINER
+  const tasksWrap = card.querySelector(`#tasks-${role.id}`);
+
+  function renderTasks() {
+    const rs2 = getRole(role.id);
+    tasksWrap.innerHTML = '';
+
+    // PRESET TASKS
+    role.tasks.forEach((text, i) => {
+      const checked = !!rs2.tasks[i];
+      const item = document.createElement('div');
+      item.className = 'task-item';
+      item.innerHTML = `
+        <div class="task-cb${checked ? ' checked' : ''}" data-i="${i}" data-type="preset"></div>
+        <span class="task-text preset${checked ? ' checked' : ''}">${text}</span>
+      `;
+      item.querySelector('.task-cb').addEventListener('click', function() {
+        const r = getRole(role.id);
+        r.tasks[i] = !r.tasks[i];
+        saveState();
+        renderTasks();
+        updateRoleProgress(role, card);
+        updateGlobalProgress();
+      });
+      item.querySelector('.task-text').addEventListener('click', function() {
+        item.querySelector('.task-cb').click();
+      });
+      tasksWrap.appendChild(item);
+    });
+
+    // CUSTOM TASKS
+    (rs2.custom || []).forEach((ct, ci) => {
+      const item = document.createElement('div');
+      item.className = 'task-item';
+      item.innerHTML = `
+        <div class="task-cb${ct.done ? ' checked' : ''}"></div>
+        <span class="task-text${ct.done ? ' checked' : ''}">${ct.text}</span>
+        <span class="task-del" title="Supprimer">×</span>
+      `;
+      item.querySelector('.task-cb').addEventListener('click', () => {
+        getRole(role.id).custom[ci].done = !getRole(role.id).custom[ci].done;
+        saveState(); renderTasks();
+        updateRoleProgress(role, card); updateGlobalProgress();
+      });
+      item.querySelector('.task-text').addEventListener('click', () => item.querySelector('.task-cb').click());
+      item.querySelector('.task-del').addEventListener('click', () => {
+        getRole(role.id).custom.splice(ci, 1);
+        saveState(); renderTasks();
+        updateRoleProgress(role, card); updateGlobalProgress();
+      });
+      tasksWrap.appendChild(item);
+    });
+
+    // ADD TASK ROW
+    const addRow = document.createElement('div');
+    addRow.className = 'add-task-row';
+    const input = document.createElement('input');
+    input.className = 'add-task-input';
+    input.placeholder = '+ Ajouter une tache ou note...';
+    const btn = document.createElement('button');
+    btn.className = 'add-task-btn';
+    btn.textContent = '+';
+    btn.addEventListener('click', () => {
+      const txt = input.value.trim();
+      if (!txt) return;
+      const r = getRole(role.id);
+      if (!r.custom) r.custom = [];
+      r.custom.push({ text: txt, done: false });
+      saveState(); input.value = '';
+      renderTasks(); updateRoleProgress(role, card); updateGlobalProgress();
+    });
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') btn.click(); });
+    addRow.appendChild(input); addRow.appendChild(btn);
+    tasksWrap.appendChild(addRow);
+
+    updateRoleProgress(role, card);
+  }
+
+  renderTasks();
+  return card;
+}
+
+// TRANSPORT CARD SPECIAL (index 1)
+function renderTransportCard(role) {
+  const card = renderRole(role);
+  // Insert transport grid after header
+  const tasksWrap = card.querySelector(`#tasks-${role.id}`);
+  const transportDiv = document.createElement('div');
+  transportDiv.innerHTML = `
+    <div class="transport-grid" style="margin-bottom:0">
+      <div class="transport-item">
+        <div class="transport-from">🇧🇪 Bruxelles</div>
+        <div class="transport-detail">BRU → TRN direct ou BRU → GVA + train</div>
+        <div class="transport-price">~60–100 EUR A/R</div>
+      </div>
+      <div class="transport-item">
+        <div class="transport-from">🇫🇷 Paris</div>
+        <div class="transport-detail">CDG/ORY → TRN (EasyJet) ou TGV Paris→Turin (~5h)</div>
+        <div class="transport-price">~50–90 EUR A/R</div>
+      </div>
+      <div class="transport-item">
+        <div class="transport-from">🇨🇭 Bale</div>
+        <div class="transport-detail">BSL → TRN ou train Basel→Geneve + Turin</div>
+        <div class="transport-price">~80–120 EUR A/R</div>
+      </div>
+      <div class="transport-item">
+        <div class="transport-from">🇲🇦 Maroc</div>
+        <div class="transport-detail">CMN/RAK via Paris ou Madrid. Prevoir escale.</div>
+        <div class="transport-price">~150–250 EUR A/R</div>
+      </div>
+    </div>
+  `;
+  card.insertBefore(transportDiv, card.querySelector('.role-progress').nextSibling);
+  return card;
+}
+
+const rolesGrid = document.getElementById('roles-grid');
+rolesData.forEach((role, idx) => {
+  const card = (idx === 1) ? renderTransportCard(role) : renderRole(role);
+  rolesGrid.appendChild(card);
+});
+
+updateGlobalProgress();
 </script>
 </body>
 </html>
