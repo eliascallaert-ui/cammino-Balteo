@@ -55,6 +55,49 @@
     .stage-info { display: none; }
     h1 { font-size: 20px; }
   }
+
+  /* SECTION EQUIPE */
+  .section-title { text-align: center; margin: 32px 0 20px; }
+  .section-title h2 { color: white; font-size: 20px; letter-spacing: 2px; }
+  .section-sub { color: #78909c; font-size: 12px; margin-top: 6px; }
+  .section-sub strong { color: #ef9a9a; }
+
+  .roles-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 20px; }
+  @media (max-width: 700px) { .roles-grid { grid-template-columns: 1fr; } }
+
+  .role-card { background: #0d1f2d; border-radius: 12px; padding: 16px; border-left: 4px solid #334466; }
+  .role-nav { border-left-color: #1565c0; }
+  .role-hebergement { border-left-color: #2e7d32; }
+  .role-transport { border-left-color: #f57c00; }
+  .role-materiel { border-left-color: #6a1b9a; }
+  .role-food { border-left-color: #c62828; }
+  .role-secu { border-left-color: #00838f; }
+
+  .role-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .role-icon { font-size: 22px; }
+  .role-title { color: white; font-weight: bold; font-size: 13px; }
+  .role-person { color: #78909c; font-size: 11px; margin-top: 2px; }
+  .role-badge { margin-left: auto; font-size: 10px; padding: 3px 8px; border-radius: 20px; font-weight: bold; white-space: nowrap; }
+  .role-badge.done { background: #1b5e20; color: #a5d6a7; }
+  .role-badge.pending { background: #1a237e; color: #90caf9; }
+
+  .role-tasks { list-style: none; padding: 0; }
+  .role-tasks li { color: #b0bec5; font-size: 11px; line-height: 1.7; padding-left: 14px; position: relative; }
+  .role-tasks li::before { content: '›'; position: absolute; left: 0; color: #546e7a; }
+  .role-tasks li.done-task { color: #a5d6a7; }
+  .role-tasks li.done-task::before { content: '✓'; color: #4caf50; }
+  .role-tasks a { color: #90caf9; text-decoration: none; }
+
+  /* BUDGET */
+  .budget-box { background: #0d1f2d; border-radius: 12px; padding: 20px; border: 1px solid #334466; margin-top: 4px; }
+  .budget-box h3 { color: white; font-size: 14px; margin-bottom: 14px; text-align: center; letter-spacing: 1px; }
+  .budget-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  @media (max-width: 700px) { .budget-grid { grid-template-columns: repeat(2, 1fr); } }
+  .budget-item { background: #162536; border-radius: 8px; padding: 10px; text-align: center; }
+  .budget-item span { display: block; font-size: 10px; color: #78909c; margin-bottom: 4px; }
+  .budget-item strong { font-size: 14px; color: white; }
+  .budget-item.total { background: #1a3a5c; border: 1px solid #1565c0; }
+  .budget-item.total strong { color: #90caf9; font-size: 16px; }
 </style>
 </head>
 <body>
@@ -101,6 +144,155 @@
     <a href="https://balteus.lovevda.it/fr/etapes" target="_blank">Carte officielle + GPX par etape &rarr; balteus.lovevda.it</a>
     <p>Clique sur chaque etape pour les details</p>
   </div>
+
+  <!-- SECTION EQUIPE -->
+  <div class="section-title">
+    <h2>Equipe &amp; Missions</h2>
+    <p class="section-sub">Chacun son role, tout le monde doit rendre ses comptes avant le <strong>1er octobre</strong></p>
+  </div>
+
+  <div class="roles-grid">
+
+    <div class="role-card role-nav">
+      <div class="role-header">
+        <span class="role-icon">🧭</span>
+        <div>
+          <div class="role-title">Navigation</div>
+          <div class="role-person">Elias</div>
+        </div>
+        <span class="role-badge done">Actif</span>
+      </div>
+      <ul class="role-tasks">
+        <li class="done-task">Itineraire Cammino Balteo selectionne</li>
+        <li class="done-task">8 etapes planifiees (96km, 8 jours)</li>
+        <li>Telecharger les GPX sur <a href="https://balteus.lovevda.it/fr/etapes" target="_blank">balteus.lovevda.it</a></li>
+        <li>Briefing quotidien chaque matin sur le terrain</li>
+        <li>Application Maps.me ou Gaia GPS (offline obligatoire)</li>
+        <li>Point meteo 48h avant depart</li>
+      </ul>
+    </div>
+
+    <div class="role-card role-hebergement">
+      <div class="role-header">
+        <span class="role-icon">🏠</span>
+        <div>
+          <div class="role-title">Hebergement</div>
+          <div class="role-person">A definir</div>
+        </div>
+        <span class="role-badge pending">En cours</span>
+      </div>
+      <ul class="role-tasks">
+        <li>Reserver <strong>avant fin aout</strong> (octobre = haute saison foliage)</li>
+        <li>J1 — Lillianes : B&amp;B ou chambre chez habitant</li>
+        <li>J2 — Fontainemore : rifugio ou gite</li>
+        <li>J3 — Donnas : hotel ou B&amp;B</li>
+        <li>J4 — Arnad : chambre d'hotes</li>
+        <li>J5 — Challand-Saint-Victor : rifugio</li>
+        <li>J6 — Verrayes : gite ou B&amp;B</li>
+        <li>J7 — La Magdeleine / Antey : hotel</li>
+        <li>Budget prevu : ~210 EUR/personne (8 nuits)</li>
+        <li>Site utile : <a href="https://www.lovevda.it" target="_blank">lovevda.it</a> &amp; Booking.com</li>
+      </ul>
+    </div>
+
+    <div class="role-card role-transport">
+      <div class="role-header">
+        <span class="role-icon">✈️</span>
+        <div>
+          <div class="role-title">Transport</div>
+          <div class="role-person">A definir</div>
+        </div>
+        <span class="role-badge pending">En cours</span>
+      </div>
+      <ul class="role-tasks">
+        <li>Vol <strong>Bruxelles (BRU) → Turin (TRN)</strong></li>
+        <li>Alternatives : Bruxelles → Geneve ou Milan</li>
+        <li>Date aller : <strong>15 octobre 2026</strong></li>
+        <li>Train Turin Porta Nuova → Pont-Saint-Martin (~50 min, ~7 EUR)</li>
+        <li>Retour depuis Courmayeur → Turin en bus (~2h, ~15 EUR)</li>
+        <li>Comparer sur Skyscanner — viser vol matin le 15</li>
+        <li>Budget vol : ~50–100 EUR/personne A/R</li>
+      </ul>
+    </div>
+
+    <div class="role-card role-materiel">
+      <div class="role-header">
+        <span class="role-icon">🎒</span>
+        <div>
+          <div class="role-title">Materiel</div>
+          <div class="role-person">A definir</div>
+        </div>
+        <span class="role-badge pending">A faire</span>
+      </div>
+      <ul class="role-tasks">
+        <li>Checker que tout le monde a des <strong>chaussures de rando</strong> (obligatoire)</li>
+        <li>Sac a dos 30-40L par personne</li>
+        <li>Battons de marche (optionnel mais conseille)</li>
+        <li>Veste de pluie + couche chaud (octobre = fraicheur en altitude)</li>
+        <li>Lampe frontale, trousse de secours basique</li>
+        <li>Cremes solaire + anti-ampoules</li>
+        <li>Pas besoin de tente (hebergement chaque soir)</li>
+        <li>Faire un inventaire groupe avant depart</li>
+      </ul>
+    </div>
+
+    <div class="role-card role-food">
+      <div class="role-header">
+        <span class="role-icon">🍕</span>
+        <div>
+          <div class="role-title">Nourriture</div>
+          <div class="role-person">A definir</div>
+        </div>
+        <span class="role-badge pending">A planifier</span>
+      </div>
+      <ul class="role-tasks">
+        <li>Repas du soir : dans les refuges/restaurants (~20-25 EUR/repas)</li>
+        <li>Petit-dej : inclus dans la plupart des hebergements</li>
+        <li>Lunch : a preparer chaque matin (sandwiches, fruits)</li>
+        <li>Snacks pour les etapes : barres, fruits secs, chocolat</li>
+        <li>Prevoir 1L-2L d'eau par personne (sources sur le chemin)</li>
+        <li>Budget repas : ~200 EUR/personne sur 8 jours</li>
+        <li>Regimes particuliers ? Faire un sondage au groupe</li>
+      </ul>
+    </div>
+
+    <div class="role-card role-secu">
+      <div class="role-header">
+        <span class="role-icon">🚑</span>
+        <div>
+          <div class="role-title">Securite</div>
+          <div class="role-person">A definir</div>
+        </div>
+        <span class="role-badge pending">A preparer</span>
+      </div>
+      <ul class="role-tasks">
+        <li>Urgences Italie : <strong>112</strong> (police + SAMU)</li>
+        <li>Secours montagne : <strong>118</strong> (Soccorso Alpino)</li>
+        <li>Verifier assurance rapatriement de chacun</li>
+        <li>Carte europeenne d'assurance maladie (CEAM) obligatoire</li>
+        <li>Partager itineraire avec un proche reste en Belgique</li>
+        <li>1 trousse de secours pour le groupe minimum</li>
+        <li>Medicaments perso : anti-douleur, pansements, anti-ampoules</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- BUDGET RECAP -->
+  <div class="budget-box">
+    <h3>Budget estimatif total</h3>
+    <div class="budget-grid">
+      <div class="budget-item"><span>Vol A/R</span><strong>~75 EUR</strong></div>
+      <div class="budget-item"><span>Train Turin → PSM</span><strong>~7 EUR</strong></div>
+      <div class="budget-item"><span>Bus retour Courmayeur</span><strong>~15 EUR</strong></div>
+      <div class="budget-item"><span>Hebergement (8 nuits)</span><strong>~210 EUR</strong></div>
+      <div class="budget-item"><span>Repas (8 jours)</span><strong>~200 EUR</strong></div>
+      <div class="budget-item"><span>Skyway Montebianco</span><strong>~35 EUR</strong></div>
+      <div class="budget-item"><span>Divers / imprevu</span><strong>~50 EUR</strong></div>
+      <div class="budget-item total"><span>TOTAL</span><strong>~590 EUR</strong></div>
+    </div>
+  </div>
+
 </div>
 
 <div class="tooltip" id="tooltip">
