@@ -3,80 +3,102 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Plan B 15/10">
+<meta name="theme-color" content="#0f1923">
+<meta name="description" content="Cammino Balteo Trek – Valle d'Aoste – 15 Octobre 2026">
 <title>Plan B 15/10 — Cammino Balteo</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
-:root {
-  --bg:#0f1923; --surface:#162030; --surface2:#1c2d40; --border:#243548;
-  --text:#d0dbe8; --muted:#6b8099; --white:#fff; --blue:#2979ff;
-  --green:#43a047; --orange:#f57c00; --purple:#7b1fa2; --red:#e53935;
-  --teal:#00838f; --gold:#f9a825; --radius:14px;
+:root{
+  --bg:#0f1923;--surface:#162030;--surface2:#1c2d40;--border:#243548;
+  --text:#d0dbe8;--muted:#6b8099;--white:#fff;--blue:#2979ff;
+  --green:#43a047;--orange:#f57c00;--purple:#7b1fa2;--red:#e53935;
+  --teal:#00838f;--gold:#f9a825;--radius:14px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);font-family:'Segoe UI',system-ui,Arial,sans-serif;color:var(--text);font-size:15px;line-height:1.6;}
+a{color:#90caf9;text-decoration:none;}a:hover{text-decoration:underline;}
 
-/* ── LANG TOGGLE ── */
-#lang-btn{position:fixed;top:12px;right:16px;z-index:10000;display:flex;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:30px;padding:4px 6px;box-shadow:0 4px 16px rgba(0,0,0,0.4);}
-.lang-opt{padding:5px 12px;border-radius:24px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);transition:all 0.2s;letter-spacing:0.5px;user-select:none;}
-.lang-opt.active{background:var(--blue);color:white;box-shadow:0 2px 8px rgba(41,121,255,0.4);}
+/* LANG TOGGLE */
+#lang-btn{position:fixed;top:12px;right:16px;z-index:10000;display:flex;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:30px;padding:4px 6px;box-shadow:0 4px 16px rgba(0,0,0,.5);}
+.lang-opt{padding:5px 12px;border-radius:24px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);transition:all .2s;letter-spacing:.5px;user-select:none;}
+.lang-opt.active{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(41,121,255,.4);}
 
-/* ── SYNC BAR ── */
-#sync-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:8px 20px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);padding-right:120px;}
-#sync-dot{width:8px;height:8px;border-radius:50%;background:#444;flex-shrink:0;transition:background 0.3s;}
+/* SYNC BAR */
+#sync-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:8px 20px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);padding-right:130px;}
+#sync-dot{width:8px;height:8px;border-radius:50%;background:#444;flex-shrink:0;transition:background .3s;}
 #sync-dot.connected{background:var(--green);box-shadow:0 0 6px var(--green);}
 #sync-dot.saving{background:var(--orange);}
 
-/* ── HERO ── */
-.hero{background:linear-gradient(160deg,#0a1520 0%,#142a4a 55%,#0a2010 100%);padding:36px 20px 28px;text-align:center;border-bottom:1px solid var(--border);}
-.hero-flags{font-size:26px;letter-spacing:8px;margin-bottom:12px;}
-.hero h1{font-size:36px;color:var(--white);letter-spacing:5px;font-weight:900;}
-.hero-tagline{color:#90b8e0;font-size:14px;margin-top:8px;}
-.hero-date{display:inline-block;background:var(--blue);color:white;font-size:13px;font-weight:700;padding:6px 20px;border-radius:30px;margin-top:14px;}
+/* HERO */
+.hero{background:linear-gradient(160deg,#0a1520 0%,#142a4a 55%,#0a2010 100%);padding:32px 20px 22px;text-align:center;border-bottom:1px solid var(--border);}
+.hero-flags{font-size:26px;letter-spacing:8px;margin-bottom:10px;}
+.hero h1{font-size:34px;color:var(--white);letter-spacing:5px;font-weight:900;}
+.hero-tagline{color:#90b8e0;font-size:13px;margin-top:6px;}
+.hero-date{display:inline-block;background:var(--blue);color:#fff;font-size:13px;font-weight:700;padding:6px 20px;border-radius:30px;margin-top:12px;}
 
-/* ── GLOBAL PROGRESS ── */
-.gp-wrap{background:var(--surface);padding:14px 20px;border-bottom:1px solid var(--border);}
+/* COUNTDOWN */
+.countdown{display:flex;justify-content:center;gap:16px;margin-top:18px;flex-wrap:wrap;}
+.cd-unit{display:flex;flex-direction:column;align-items:center;min-width:64px;}
+.cd-val{font-size:32px;font-weight:900;color:var(--white);line-height:1;font-variant-numeric:tabular-nums;}
+.cd-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:3px;}
+.cd-sep{font-size:28px;font-weight:900;color:var(--border);line-height:1;padding-top:4px;}
+.cd-title{font-size:11px;color:var(--muted);text-align:center;margin-top:10px;text-transform:uppercase;letter-spacing:2px;}
+
+/* PWA HINT */
+.pwa-hint{text-align:center;font-size:11px;color:var(--muted);padding:8px 20px;background:var(--surface);border-bottom:1px solid var(--border);}
+.pwa-hint span{cursor:pointer;text-decoration:underline;color:#90caf9;}
+
+/* PROGRESS */
+.gp-wrap{background:var(--surface);padding:12px 20px;border-bottom:1px solid var(--border);}
 .gp-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;gap:14px;}
 .gp-label{font-size:12px;color:var(--muted);white-space:nowrap;}
 .gp-bar-bg{flex:1;background:var(--bg);border-radius:10px;height:8px;overflow:hidden;}
-.gp-bar{height:100%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:10px;transition:width .5s ease;}
+.gp-bar{height:100%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:10px;transition:width .5s;}
 #gp-pct{font-size:13px;font-weight:700;color:var(--white);white-space:nowrap;}
 
-.container{max-width:960px;margin:0 auto;padding:28px 20px;}
+.container{max-width:960px;margin:0 auto;padding:24px 20px;}
 
-/* ── SECTION HEADERS ── */
-.sec-head{margin:36px 0 18px;display:flex;align-items:center;gap:14px;}
-.sec-head h2{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:2px;white-space:nowrap;}
+/* SECTION HEADER */
+.sec-head{margin:36px 0 16px;display:flex;align-items:center;gap:14px;}
+.sec-head h2{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:2px;white-space:nowrap;}
 .sec-head::after{content:'';flex:1;height:1px;background:var(--border);}
-.sec-sub{font-size:13px;color:var(--muted);margin:-10px 0 18px;}
+.sec-sub{font-size:13px;color:var(--muted);margin:-8px 0 16px;}
 .sec-sub strong{color:#ef9a9a;}
 
-/* ── MAP ── */
-.map-wrap{background:linear-gradient(170deg,#1a3a60 0%,#1e3a50 50%,#1a3020 100%);border-radius:var(--radius);padding:24px;overflow:hidden;position:relative;min-height:240px;border:1px solid var(--border);}
-svg.bg-svg{position:absolute;inset:0;width:100%;height:100%;}
-.stages-row{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:50px 8px 30px;}
-.stage-pin{display:flex;flex-direction:column;align-items:center;cursor:pointer;flex:1;}
-.stage-dot{width:20px;height:20px;border-radius:50%;border:3px solid rgba(255,255,255,.9);box-shadow:0 2px 12px rgba(0,0,0,.5);transition:transform .2s,box-shadow .2s;margin:6px 0;flex-shrink:0;}
-.stage-pin:hover .stage-dot{transform:scale(1.5);box-shadow:0 4px 18px rgba(0,0,0,.6);}
-.stage-tag{font-size:9px;background:rgba(0,0,0,.65);color:white;border-radius:5px;padding:2px 6px;font-weight:700;}
-.stage-lbl{font-size:9px;font-weight:700;color:white;text-align:center;margin-top:4px;line-height:1.3;text-shadow:0 1px 4px rgba(0,0,0,1);max-width:72px;}
-.stage-km{font-size:8px;color:rgba(255,255,255,.5);text-align:center;margin-top:2px;}
-.trail{position:absolute;top:50%;left:24px;right:24px;height:2px;background:repeating-linear-gradient(90deg,#ef5350 0,#ef5350 8px,transparent 8px,transparent 14px);z-index:1;transform:translateY(-50%);}
+/* LEAFLET MAP */
+#trek-map{width:100%;height:360px;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;z-index:1;}
+.leaflet-container{background:#0f1923;}
+.leaflet-popup-content-wrapper{background:#08141f;border:1px solid var(--border);color:var(--text);border-radius:10px;}
+.leaflet-popup-tip{background:#08141f;}
+.leaflet-popup-content{margin:12px 14px;font-size:13px;}
+.pop-title{font-weight:700;color:#90caf9;font-size:14px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.pop-row{color:#90a4ae;line-height:2;}
+.pop-row b{color:var(--white);}
+.pop-note{margin-top:6px;color:#64b5f6;font-size:12px;line-height:1.5;}
 
-/* ── TOOLTIP ── */
-.tip{display:none;position:fixed;background:#08141f;border:1px solid var(--border);border-radius:10px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.7);font-size:13px;z-index:9999;min-width:220px;max-width:270px;pointer-events:none;}
-.tip.show{display:block;}
-.tip-title{font-weight:700;color:#90caf9;font-size:14px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--border);}
-.tip-row{color:#90a4ae;line-height:2;}
-.tip-row b{color:var(--white);}
-.tip-note{margin-top:8px;color:#64b5f6;font-size:12px;line-height:1.5;}
-
-/* ── STATS ── */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:4px;}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px;}
 .stat{background:var(--surface);border-radius:12px;padding:16px 12px;text-align:center;border:1px solid var(--border);}
 .stat-val{font-size:22px;font-weight:800;color:var(--white);}
 .stat-lbl{font-size:11px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.5px;}
 
-/* ── ROLE CARDS ── */
+/* PARTICIPANTS */
+.participants-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.part-card{background:var(--surface);border-radius:12px;border:1px solid var(--border);padding:16px 14px;display:flex;flex-direction:column;gap:8px;}
+.part-num{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;}
+.part-field{display:flex;flex-direction:column;gap:3px;}
+.part-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.part-input{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:7px 10px;font-size:12px;color:var(--white);font-family:inherit;outline:none;width:100%;resize:none;}
+.part-input:focus{border-color:var(--blue);}
+.part-input.name-big{font-size:14px;font-weight:700;border:none;background:transparent;padding:0;color:#90caf9;}
+.part-input.name-big:focus{border-bottom:1px dashed var(--blue);border-radius:0;}
+.part-input.name-big::placeholder{color:var(--muted);font-weight:400;font-size:13px;}
+
+/* ROLES */
 .roles-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
 .role-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;display:flex;flex-direction:column;}
 .role-top{padding:18px 20px 14px;border-bottom:1px solid var(--border);}
@@ -87,9 +109,6 @@ svg.bg-svg{position:absolute;inset:0;width:100%;height:100%;}
 .name-row{display:flex;align-items:center;gap:6px;margin-top:5px;}
 .name-input{font-size:13px;color:#90caf9;font-weight:600;border:none;background:transparent;outline:none;font-family:inherit;width:100%;cursor:pointer;}
 .name-input:focus{color:var(--white);border-bottom:1px dashed var(--blue);cursor:text;}
-.edit-hint{font-size:11px;color:var(--muted);cursor:pointer;flex-shrink:0;}
-
-/* PROGRESS BAR */
 .role-prog{padding:10px 20px 0;}
 .rprog-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
 .rprog-bg{flex:1;background:var(--bg);border-radius:8px;height:5px;overflow:hidden;}
@@ -97,31 +116,92 @@ svg.bg-svg{position:absolute;inset:0;width:100%;height:100%;}
 .rprog-txt{font-size:11px;color:var(--muted);white-space:nowrap;}
 
 /* TASKS */
-.tasks-body{padding:4px 20px 16px;flex:1;}
+.tasks-body{padding:4px 20px 14px;flex:1;}
 .task-row{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid rgba(36,53,72,.5);}
 .task-row:last-of-type{border-bottom:none;}
 .cb{width:18px;height:18px;border:2px solid var(--border);border-radius:5px;cursor:pointer;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .2s;background:transparent;}
 .cb.on{background:var(--blue);border-color:var(--blue);}
-.cb.on::after{content:'✓';font-size:11px;color:white;font-weight:700;}
+.cb.on::after{content:'✓';font-size:11px;color:#fff;font-weight:700;}
 .task-lbl{font-size:13px;color:var(--text);line-height:1.5;flex:1;cursor:pointer;transition:color .2s;}
 .task-lbl.done{text-decoration:line-through;color:var(--muted);}
-.task-del{font-size:18px;color:var(--border);cursor:pointer;flex-shrink:0;line-height:1;opacity:0;transition:opacity .2s,color .2s;padding:0 2px;}
+.task-del{font-size:18px;color:var(--border);cursor:pointer;flex-shrink:0;opacity:0;transition:opacity .2s,color .2s;}
 .task-row:hover .task-del{opacity:1;}
 .task-del:hover{color:#ef5350;}
-
-/* ADD TASK */
 .add-row{display:flex;gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);}
 .add-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px;color:var(--white);outline:none;font-family:inherit;}
 .add-input:focus{border-color:var(--blue);}
-.add-btn{background:var(--blue);border:none;border-radius:8px;color:white;font-size:20px;width:36px;cursor:pointer;transition:background .2s;}
+.add-btn{background:var(--blue);border:none;border-radius:8px;color:#fff;font-size:20px;width:36px;cursor:pointer;transition:background .2s;}
 .add-btn:hover{background:#448aff;}
 
-/* TRANSPORT */
-.transport-cities{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:12px 20px;border-bottom:1px solid var(--border);}
+/* TRANSPORT CITIES */
+.transport-cities{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px 20px;border-bottom:1px solid var(--border);}
 .city-card{background:var(--surface2);border-radius:10px;padding:12px;border:1px solid var(--border);}
-.city-from{font-size:13px;font-weight:700;color:var(--white);margin-bottom:4px;}
-.city-detail{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:4px;}
-.city-price{font-size:12px;color:#80cbc4;font-weight:700;}
+.city-from{font-size:13px;font-weight:700;color:var(--white);margin-bottom:3px;}
+.city-detail{font-size:12px;color:var(--muted);line-height:1.5;}
+.city-price{font-size:12px;color:#80cbc4;font-weight:700;margin-top:4px;}
+
+/* COMMENTS */
+.comments-section{border-top:1px solid var(--border);padding:0 20px 16px;}
+.comments-toggle{display:flex;align-items:center;gap:8px;padding:12px 0;cursor:pointer;font-size:12px;color:var(--muted);user-select:none;transition:color .2s;}
+.comments-toggle:hover{color:var(--text);}
+.comments-toggle-arrow{transition:transform .2s;}
+.comments-toggle-arrow.open{transform:rotate(90deg);}
+.comments-inner{display:none;}
+.comments-inner.open{display:block;}
+.comment-list{display:flex;flex-direction:column;gap:10px;margin-bottom:12px;max-height:220px;overflow-y:auto;padding-right:4px;}
+.comment-item{background:var(--surface2);border-radius:8px;padding:10px 12px;border:1px solid var(--border);}
+.comment-meta{display:flex;gap:8px;margin-bottom:4px;}
+.comment-author{font-size:12px;font-weight:700;color:#90caf9;}
+.comment-time{font-size:11px;color:var(--muted);}
+.comment-text{font-size:13px;color:var(--text);line-height:1.5;}
+.comment-empty{font-size:12px;color:var(--muted);text-align:center;padding:12px;font-style:italic;}
+.comment-form{display:flex;gap:8px;}
+.comment-author-input{width:100px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--white);font-family:inherit;outline:none;flex-shrink:0;}
+.comment-author-input:focus{border-color:var(--blue);}
+.comment-msg-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px;color:var(--white);font-family:inherit;outline:none;}
+.comment-msg-input:focus{border-color:var(--blue);}
+.comment-send-btn{background:var(--blue);border:none;border-radius:8px;color:#fff;font-size:18px;width:36px;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.comment-send-btn:hover{background:#448aff;}
+
+/* EXPENSES */
+.expense-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.exp-form-box{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:20px;}
+.exp-form-box h3{font-size:13px;font-weight:700;color:var(--white);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.exp-field{margin-bottom:12px;}
+.exp-field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.exp-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--white);font-family:inherit;outline:none;}
+.exp-input:focus{border-color:var(--blue);}
+.exp-checkboxes{display:flex;flex-wrap:wrap;gap:8px;}
+.exp-cb-row{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text);cursor:pointer;}
+.exp-cb-row input{accent-color:var(--blue);}
+.exp-submit{background:var(--blue);border:none;border-radius:8px;color:#fff;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;width:100%;margin-top:6px;transition:background .2s;}
+.exp-submit:hover{background:#448aff;}
+.exp-list-box{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;display:flex;flex-direction:column;}
+.exp-list-head{padding:14px 20px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--white);}
+.exp-list{flex:1;overflow-y:auto;max-height:320px;}
+.exp-item{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid rgba(36,53,72,.5);}
+.exp-item:last-child{border-bottom:none;}
+.exp-amt{font-size:16px;font-weight:800;color:var(--white);white-space:nowrap;}
+.exp-info{flex:1;min-width:0;}
+.exp-desc{font-size:13px;color:var(--text);font-weight:600;}
+.exp-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.exp-del{font-size:18px;color:var(--border);cursor:pointer;opacity:0;transition:opacity .2s,color .2s;}
+.exp-item:hover .exp-del{opacity:1;}
+.exp-del:hover{color:#ef5350;}
+.exp-empty{text-align:center;font-size:13px;color:var(--muted);padding:32px;font-style:italic;}
+.exp-balance-box{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:20px;margin-top:16px;}
+.exp-balance-box h3{font-size:13px;font-weight:700;color:var(--white);margin-bottom:14px;}
+.exp-balance-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.exp-bal-item{background:var(--surface2);border-radius:10px;padding:10px 12px;text-align:center;border:1px solid var(--border);}
+.exp-bal-name{font-size:11px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;}
+.exp-bal-val{font-size:16px;font-weight:800;}
+.exp-bal-val.pos{color:#66bb6a;}
+.exp-bal-val.neg{color:#ef5350;}
+.exp-bal-val.zero{color:var(--muted);}
+.exp-total-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0 0;border-top:1px solid var(--border);margin-top:14px;}
+.exp-total-lbl{font-size:13px;color:var(--muted);}
+.exp-total-val{font-size:18px;font-weight:800;color:var(--white);}
+.exp-settled{font-size:13px;color:#66bb6a;text-align:center;padding:8px;font-style:italic;}
 
 /* INFO GRID */
 .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
@@ -130,14 +210,11 @@ svg.bg-svg{position:absolute;inset:0;width:100%;height:100%;}
 .info-card li{font-size:13px;color:var(--muted);line-height:1.9;list-style:none;padding-left:14px;position:relative;}
 .info-card li::before{content:'›';position:absolute;left:0;color:var(--border);}
 .info-card li b{color:var(--text);}
-.info-card a{color:#90caf9;text-decoration:none;}
-.info-card a:hover{text-decoration:underline;}
 .sos{border-left:3px solid #c62828!important;}
 .sos h4{color:#ef9a9a;}
 
 /* BUDGET */
-.budget-box{background:var(--surface);border-radius:var(--radius);padding:24px;border:1px solid var(--border);}
-.budget-box h3{color:var(--white);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;text-align:center;margin-bottom:18px;}
+.budget-box{background:var(--surface);border-radius:var(--radius);padding:22px;border:1px solid var(--border);}
 .budget-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
 .budget-item{background:var(--surface2);border-radius:10px;padding:12px 10px;text-align:center;border:1px solid var(--border);}
 .budget-item span{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;}
@@ -146,18 +223,26 @@ svg.bg-svg{position:absolute;inset:0;width:100%;height:100%;}
 .budget-item.tot strong{color:#90caf9;font-size:18px;}
 .budget-item.tot2{background:#0d2010;border-color:#2e7d32;}
 .budget-item.tot2 strong{color:#a5d6a7;font-size:18px;}
-.budget-note{font-size:12px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.6;}
+.budget-note{font-size:12px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.7;}
+
+/* GALLERY */
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.gallery-card{background:var(--surface);border-radius:12px;border:1px solid var(--border);overflow:hidden;transition:transform .2s,box-shadow .2s;}
+.gallery-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.4);}
+.gallery-img{width:100%;height:160px;object-fit:cover;display:block;background:var(--surface2);}
+.gallery-body{padding:14px;}
+.gallery-title{font-size:14px;font-weight:700;color:var(--white);margin-bottom:5px;}
+.gallery-desc{font-size:12px;color:var(--muted);line-height:1.6;}
 
 footer{text-align:center;padding:24px;font-size:12px;color:var(--border);border-top:1px solid var(--surface);margin-top:8px;}
-footer a{color:var(--muted);}
 
-@media(max-width:680px){
-  .roles-grid,.info-grid{grid-template-columns:1fr;}
-  .stats{grid-template-columns:repeat(2,1fr);}
-  .budget-grid{grid-template-columns:repeat(2,1fr);}
+@media(max-width:760px){
+  .roles-grid,.info-grid,.gallery-grid,.expense-grid{grid-template-columns:1fr;}
+  .stats,.budget-grid,.participants-grid{grid-template-columns:repeat(2,1fr);}
+  .exp-balance-grid{grid-template-columns:repeat(2,1fr);}
   .transport-cities{grid-template-columns:1fr;}
   .hero h1{font-size:24px;}
-  .stage-km,.stage-lbl{display:none;}
+  .cd-val{font-size:24px;}
   #lang-btn{top:8px;right:8px;}
 }
 </style>
@@ -176,13 +261,26 @@ footer a{color:var(--muted);}
   <span id="sync-msg"></span>
 </div>
 
-<!-- HERO -->
+<!-- HERO + COUNTDOWN -->
 <div class="hero">
   <div class="hero-flags">🇧🇪 🇫🇷 🇨🇭 🇲🇦</div>
   <h1>CAMMINO BALTEO</h1>
   <p class="hero-tagline" data-t="tagline"></p>
   <div class="hero-date">15 – 23 Octobre 2026</div>
+  <p class="cd-title" data-t="countdown_title"></p>
+  <div class="countdown">
+    <div class="cd-unit"><div class="cd-val" id="cd-days">--</div><div class="cd-lbl" data-t="countdown_days"></div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><div class="cd-val" id="cd-hours">--</div><div class="cd-lbl" data-t="countdown_hours"></div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><div class="cd-val" id="cd-mins">--</div><div class="cd-lbl" data-t="countdown_mins"></div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><div class="cd-val" id="cd-secs">--</div><div class="cd-lbl" data-t="countdown_secs"></div></div>
+  </div>
 </div>
+
+<!-- PWA HINT -->
+<div class="pwa-hint" id="pwa-hint" data-t="pwa_hint" style="display:none"></div>
 
 <!-- GLOBAL PROGRESS -->
 <div class="gp-wrap">
@@ -198,33 +296,51 @@ footer a{color:var(--muted);}
   <!-- MAP -->
   <div class="sec-head" style="margin-top:8px"><h2 data-t="itinerary"></h2></div>
   <p class="sec-sub" data-t="itinerary_sub"></p>
-  <div class="map-wrap">
-    <svg class="bg-svg" viewBox="0 0 960 250" preserveAspectRatio="none">
-      <polygon points="0,250 85,105 165,185 265,65 345,165 445,85 530,145 630,45 715,135 815,75 910,115 960,95 960,250" fill="rgba(30,65,110,0.45)"/>
-      <polygon points="0,250 65,148 135,205 225,95 315,185 405,115 490,165 590,78 668,158 765,95 862,138 960,108 960,250" fill="rgba(18,42,75,0.4)"/>
-      <polygon points="255,65 265,38 275,65" fill="rgba(255,255,255,0.55)"/>
-      <polygon points="435,85 445,56 455,85" fill="rgba(255,255,255,0.5)"/>
-      <polygon points="620,45 630,16 640,45" fill="rgba(255,255,255,0.65)"/>
-      <polygon points="805,75 815,46 825,75" fill="rgba(255,255,255,0.5)"/>
-      <path d="M0,225 Q240,215 480,226 Q720,237 960,228" stroke="#42a5f5" stroke-width="3" fill="none" opacity="0.35"/>
-      <text x="480" y="244" text-anchor="middle" font-size="11" fill="#64b5f6" font-style="italic" font-family="Arial,sans-serif">← Dora Baltea →</text>
-    </svg>
-    <div class="trail" style="top:50%"></div>
-    <div class="stages-row" id="stages-row"></div>
-  </div>
+  <div id="trek-map"></div>
 
   <!-- STATS -->
-  <div class="stats" style="margin-top:14px">
+  <div class="stats">
     <div class="stat"><div class="stat-val">8</div><div class="stat-lbl" data-t="days"></div></div>
     <div class="stat"><div class="stat-val">~96km</div><div class="stat-lbl" data-t="distance"></div></div>
     <div class="stat"><div class="stat-val">1650m</div><div class="stat-lbl" data-t="max_alt"></div></div>
     <div class="stat"><div class="stat-val">8</div><div class="stat-lbl" data-t="adventurers"></div></div>
   </div>
 
+  <!-- PARTICIPANTS -->
+  <div class="sec-head"><h2 data-t="participants"></h2></div>
+  <p class="sec-sub" data-t="participants_sub"></p>
+  <div class="participants-grid" id="participants-grid"></div>
+
   <!-- TEAM -->
   <div class="sec-head"><h2 data-t="team_missions"></h2></div>
   <p class="sec-sub" data-t="team_sub"></p>
   <div class="roles-grid" id="roles-grid"></div>
+
+  <!-- EXPENSES -->
+  <div class="sec-head"><h2 data-t="expenses"></h2></div>
+  <p class="sec-sub" data-t="expenses_sub"></p>
+  <div class="expense-grid">
+    <div class="exp-form-box">
+      <h3>➕ <span data-t="exp_add"></span></h3>
+      <div class="exp-field"><label data-t="exp_who"></label><input id="exp-who" class="exp-input" type="text" maxlength="30"/></div>
+      <div class="exp-field"><label data-t="exp_amount"></label><input id="exp-amount" class="exp-input" type="number" min="0" step="0.01"/></div>
+      <div class="exp-field"><label data-t="exp_desc"></label><input id="exp-desc" class="exp-input" type="text" maxlength="60"/></div>
+      <div class="exp-field"><label data-t="exp_for"></label><div class="exp-checkboxes" id="exp-shared-boxes"></div></div>
+      <button class="exp-submit" onclick="addExpense()" data-t="exp_submit"></button>
+    </div>
+    <div class="exp-list-box">
+      <div class="exp-list-head">📋 <span data-t="exp_log"></span></div>
+      <div class="exp-list" id="exp-list"></div>
+    </div>
+  </div>
+  <div class="exp-balance-box">
+    <h3 data-t="exp_balance"></h3>
+    <div class="exp-balance-grid" id="exp-balance-grid"></div>
+    <div class="exp-total-row">
+      <span class="exp-total-lbl" data-t="exp_total"></span>
+      <span class="exp-total-val" id="exp-total-val">0 EUR</span>
+    </div>
+  </div>
 
   <!-- PRACTICAL INFO -->
   <div class="sec-head"><h2 data-t="practical_info"></h2></div>
@@ -245,472 +361,751 @@ footer a{color:var(--muted);}
     </div>
     <p class="budget-note" data-t="budget_note"></p>
   </div>
-</div>
 
-<!-- TOOLTIP -->
-<div class="tip" id="tip">
-  <div class="tip-title" id="tip-title"></div>
-  <div id="tip-body"></div>
+  <!-- GALLERY -->
+  <div class="sec-head"><h2 data-t="gallery"></h2></div>
+  <p class="sec-sub" data-t="gallery_sub"></p>
+  <div class="gallery-grid" id="gallery-grid"></div>
+
 </div>
 
 <footer>
   Plan B 15/10 &nbsp;·&nbsp; Cammino Balteo, Vallee d'Aoste &nbsp;·&nbsp;
   <span data-t="nav_by"></span> Elias Callaert &nbsp;·&nbsp;
-  <a href="https://balteus.lovevda.it/fr/etapes" target="_blank" data-t="official_site"></a>
+  <a href="https://balteus.lovevda.it" target="_blank" data-t="official_site"></a>
 </footer>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// ══════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 // TRANSLATIONS
-// ══════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 const T = {
-  fr: {
-    tagline: "Plan B 15/10 · Vallee d'Aoste, Italie · 8 aventuriers, 4 pays",
-    org_progress: "Organisation globale",
-    itinerary: "Itineraire",
-    itinerary_sub: "Passe sur chaque etape pour les details · GPX disponibles sur balteus.lovevda.it",
-    days: "Jours", distance: "Distance", max_alt: "Altitude max", adventurers: "Aventuriers",
-    team_missions: "Equipe & Missions",
-    team_sub: "Les taches sont synchronisees en temps reel — tout le monde voit les mises a jour instantanement. Coche, ajoute des notes, modifie ton nom.",
-    practical_info: "Infos Pratiques",
-    budget: "Budget Estimatif",
-    flight_rt: "Vol A/R", local_trains: "Trains / Bus", accommodation: "Hebergement (7 nuits)",
-    meals: "Repas (8 jours)", skyway: "Skyway Montebianco", misc: "Divers / Imprevu",
-    total_eu: "Total Europe (BE/FR/CH)", total_ma: "Total Maroc",
-    budget_note: "Hebergements a reserver avant fin aout — forte demande en octobre (saison foliage). Budget repas base sur ~25 EUR/soir en rifugio + ~10 EUR lunch + snacks.",
-    nav_by: "Navigation :", official_site: "Site officiel du trek",
-    add_task_placeholder: "Ajouter une tache ou note...",
-    name_placeholder: "Clique pour ajouter ton nom",
-    tasks_label: "taches",
-    sync_connecting: "Connexion a la base de donnees...",
-    sync_connected: "Synchronise en temps reel · Tout le groupe voit les mises a jour instantanement",
-    sync_saving: "Sauvegarde...",
-    sync_saved: "Sauvegarde",
-    sync_offline: "Hors ligne — modifications sauvegardees localement",
-    sync_updated: "Mise a jour recue",
-    tip_dist: "Distance", tip_dur: "Duration", tip_alt: "Altitude",
+  fr:{
+    tagline:"Plan B 15/10 · Valle d'Aoste, Italie · 8 aventuriers, 4 pays",
+    countdown_title:"Compte à rebours",countdown_days:"jours",countdown_hours:"h",countdown_mins:"min",countdown_secs:"sec",
+    org_progress:"Organisation globale",
+    itinerary:"Itinéraire", itinerary_sub:"Clique sur chaque étape pour les détails · GPX sur balteus.lovevda.it",
+    days:"Jours",distance:"Distance",max_alt:"Altitude max",adventurers:"Aventuriers",
+    participants:"Participants",
+    participants_sub:"Chacun remplit ses infos de voyage — synchronisé en temps réel pour tout le groupe.",
+    part_name:"Prénom",part_city:"Ville de départ",part_flight:"Vol / Train",part_arrival:"Arrivée Turin",part_notes:"Notes",
+    ph_name:"Ton prénom...",ph_city:"Ex: Bruxelles",ph_flight:"BRU→TRN 14/10 08h30",ph_arrival:"14/10 10h15",ph_notes:"Infos utiles...",
+    team_missions:"Équipe & Missions",
+    team_sub:"Tâches synchronisées en temps réel — tout le monde voit les mises à jour instantanément.",
+    add_task_ph:"Ajouter une tâche ou note...",name_ph:"Cliquer pour ajouter ton nom",tasks_label:"tâches",
+    comments_toggle_show:"💬 Discussion",comments_toggle_hide:"💬 Masquer",
+    comments_ph:"Ton message...",comments_author:"Ton prénom",comments_send:"→",
+    comments_empty:"Pas encore de message. Sois le premier !",
+    expenses:"Dépenses & Remboursements",
+    expenses_sub:"Ajoutez vos dépenses partagées — les balances se calculent automatiquement.",
+    exp_add:"Ajouter une dépense",exp_who:"Qui a payé ?",exp_amount:"Montant (EUR)",
+    exp_desc:"Description",exp_for:"Partagé avec",exp_all:"Tout le groupe",exp_submit:"Ajouter",
+    exp_log:"Journal des dépenses",exp_balance:"Balances",exp_total:"Total dépenses",
+    exp_empty:"Aucune dépense pour l'instant.",
+    exp_settled:"✅ Tous les comptes sont équilibrés !",
+    exp_paid_by:"Payé par",exp_shared_with:"Partagé entre",
+    practical_info:"Infos Pratiques",
+    budget:"Budget Estimatif",
+    flight_rt:"Vol A/R",local_trains:"Trains / Bus",accommodation:"Hébergement (7 nuits)",
+    meals:"Repas (8 jours)",skyway:"Skyway Montebianco",misc:"Divers / Imprévus",
+    total_eu:"Total Europe (BE/FR/CH)",total_ma:"Total Maroc",
+    budget_note:"Hébergements à réserver avant fin août — forte demande en octobre (foliage). Budget repas basé sur ~25 EUR/soir en rifugio + ~10 EUR lunch + snacks.",
+    gallery:"Inspiration — Cammino Balteo",gallery_sub:"Un aperçu de la Valle d'Aoste en automne 🍂",
+    nav_by:"Navigation :",official_site:"Site officiel du trek",
+    pwa_hint:"📲 Ajouter à l'écran d'accueil pour un accès rapide (Safari → Partager → Sur l'écran d'accueil)",
+    sync_connecting:"Connexion...",sync_connected:"Synchronisé en temps réel · Tout le groupe voit les mises à jour",
+    sync_saving:"Sauvegarde...",sync_saved:"Sauvegardé",sync_offline:"Hors ligne — sauvegarde locale",
+    sync_updated:"Mise à jour reçue",
+    tip_dist:"Distance",tip_dur:"Durée",tip_alt:"Altitude",
   },
-  en: {
-    tagline: "Plan B 15/10 · Aosta Valley, Italy · 8 adventurers, 4 countries",
-    org_progress: "Overall organisation",
-    itinerary: "Itinerary",
-    itinerary_sub: "Hover over each stage for details · GPX files available at balteus.lovevda.it",
-    days: "Days", distance: "Distance", max_alt: "Max Altitude", adventurers: "Adventurers",
-    team_missions: "Team & Missions",
-    team_sub: "Tasks are synced in real time — everyone sees updates instantly. Check off tasks, add notes, update your name.",
-    practical_info: "Practical Info",
-    budget: "Estimated Budget",
-    flight_rt: "Return Flight", local_trains: "Trains / Bus", accommodation: "Accommodation (7 nights)",
-    meals: "Meals (8 days)", skyway: "Skyway Montebianco", misc: "Extras / Contingency",
-    total_eu: "Total Europe (BE/FR/CH)", total_ma: "Total Morocco",
-    budget_note: "Book accommodation before end of August — high demand in October (foliage season). Meal budget based on ~EUR 25/evening at rifugio + ~EUR 10 lunch + snacks.",
-    nav_by: "Navigation:", official_site: "Official trek website",
-    add_task_placeholder: "Add a task or note...",
-    name_placeholder: "Click to add your name",
-    tasks_label: "tasks",
-    sync_connecting: "Connecting to database...",
-    sync_connected: "Synced in real time · Everyone sees updates instantly",
-    sync_saving: "Saving...",
-    sync_saved: "Saved",
-    sync_offline: "Offline — changes saved locally",
-    sync_updated: "Update received",
-    tip_dist: "Distance", tip_dur: "Duration", tip_alt: "Altitude",
+  en:{
+    tagline:"Plan B 15/10 · Aosta Valley, Italy · 8 adventurers, 4 countries",
+    countdown_title:"Countdown",countdown_days:"days",countdown_hours:"h",countdown_mins:"min",countdown_secs:"sec",
+    org_progress:"Overall organisation",
+    itinerary:"Itinerary",itinerary_sub:"Click each stage for details · GPX files at balteus.lovevda.it",
+    days:"Days",distance:"Distance",max_alt:"Max Altitude",adventurers:"Adventurers",
+    participants:"Participants",
+    participants_sub:"Everyone fills in their travel details — synced in real time for the whole group.",
+    part_name:"First name",part_city:"Departure city",part_flight:"Flight / Train",part_arrival:"Arrival Turin",part_notes:"Notes",
+    ph_name:"Your name...",ph_city:"e.g. Brussels",ph_flight:"BRU→TRN 14/10 08:30",ph_arrival:"14/10 10:15",ph_notes:"Useful info...",
+    team_missions:"Team & Missions",
+    team_sub:"Tasks synced in real time — everyone sees updates instantly.",
+    add_task_ph:"Add a task or note...",name_ph:"Click to add your name",tasks_label:"tasks",
+    comments_toggle_show:"💬 Discussion",comments_toggle_hide:"💬 Hide",
+    comments_ph:"Your message...",comments_author:"Your name",comments_send:"→",
+    comments_empty:"No messages yet. Be the first!",
+    expenses:"Expenses & Reimbursements",
+    expenses_sub:"Log shared expenses — balances are calculated automatically.",
+    exp_add:"Add an expense",exp_who:"Who paid?",exp_amount:"Amount (EUR)",
+    exp_desc:"Description",exp_for:"Split with",exp_all:"Whole group",exp_submit:"Add",
+    exp_log:"Expense log",exp_balance:"Balances",exp_total:"Total expenses",
+    exp_empty:"No expenses logged yet.",
+    exp_settled:"✅ All accounts are settled!",
+    exp_paid_by:"Paid by",exp_shared_with:"Split between",
+    practical_info:"Practical Info",
+    budget:"Estimated Budget",
+    flight_rt:"Return Flight",local_trains:"Trains / Bus",accommodation:"Accommodation (7 nights)",
+    meals:"Meals (8 days)",skyway:"Skyway Montebianco",misc:"Extras / Contingency",
+    total_eu:"Total Europe (BE/FR/CH)",total_ma:"Total Morocco",
+    budget_note:"Book accommodation before end of August — high demand in October (foliage season). Meal budget based on ~EUR 25/evening at rifugio + ~EUR 10 lunch + snacks.",
+    gallery:"Inspiration — Cammino Balteo",gallery_sub:"A glimpse of the Aosta Valley in autumn 🍂",
+    nav_by:"Navigation:",official_site:"Official trek website",
+    pwa_hint:"📲 Add to home screen for quick access (Safari → Share → Add to Home Screen)",
+    sync_connecting:"Connecting...",sync_connected:"Synced in real time · Everyone sees updates instantly",
+    sync_saving:"Saving...",sync_saved:"Saved",sync_offline:"Offline — local save only",
+    sync_updated:"Update received",
+    tip_dist:"Distance",tip_dur:"Duration",tip_alt:"Altitude",
   }
 };
 
-let lang = localStorage.getItem('balteo_lang') || 'fr';
+let lang = localStorage.getItem('balteo_lang')||'fr';
+function t(k){return T[lang][k]||T.fr[k]||k;}
+function setLang(l){lang=l;localStorage.setItem('balteo_lang',l);applyLang();}
 
-function t(key) { return T[lang][key] || T.fr[key] || key; }
-
-function applyLang() {
-  document.querySelectorAll('[data-t]').forEach(el => {
-    const key = el.getAttribute('data-t');
-    el.textContent = t(key);
-  });
-  document.getElementById('btn-fr').className = 'lang-opt' + (lang === 'fr' ? ' active' : '');
-  document.getElementById('btn-en').className = 'lang-opt' + (lang === 'en' ? ' active' : '');
-  document.documentElement.lang = lang;
-  // Update dynamic placeholders
-  document.querySelectorAll('.name-input').forEach(el => { if (!el.value) el.placeholder = t('name_placeholder'); });
-  document.querySelectorAll('.add-input').forEach(el => { el.placeholder = t('add_task_placeholder'); });
-  // Re-render info grid and roles for translated content
-  renderInfoGrid();
-  renderAll();
+function applyLang(){
+  document.querySelectorAll('[data-t]').forEach(el=>{const k=el.getAttribute('data-t');el.textContent=t(k);});
+  document.getElementById('btn-fr').className='lang-opt'+(lang==='fr'?' active':'');
+  document.getElementById('btn-en').className='lang-opt'+(lang==='en'?' active':'');
+  document.documentElement.lang=lang;
+  renderInfoGrid();renderGallery();renderAll();renderParticipants();renderExpenses();
 }
 
-function setLang(l) {
-  lang = l;
-  localStorage.setItem('balteo_lang', l);
-  applyLang();
-}
-
-// ══════════════════════════════════════════
-// STAGES DATA (bilingual)
-// ══════════════════════════════════════════
-const stagesData = [
-  {day:'J0', name:'Pont-Saint-Martin', km:{fr:'Depart',en:'Start'},color:'#1565c0',
-   d:{dist:'Pont-Saint-Martin',dur:{fr:'Train depuis Turin ~50 min, ~7 EUR',en:'Train from Turin ~50 min, ~EUR 7'},alt:'345m',
-     note:{fr:'Pont du Diable — pont romain du 1er s. av. J.-C. Ville medievale pittoresque.',en:"Devil's Bridge — Roman bridge from the 1st century BC. Charming medieval town."}}},
-  {day:'J1', name:'Lillianes', km:{fr:'8km · 4h',en:'8km · 4h'},color:'#e53935',
-   d:{dist:'8.2 km',dur:{fr:'4h00',en:'4h00'},alt:'900m',
-     note:{fr:'Premiere etape tranquille. Village de Perloz. Mise en jambes ideale pour le groupe.',en:'Easy first stage. Village of Perloz. Perfect warm-up for the whole group.'}}},
-  {day:'J2', name:'Fontainemore', km:{fr:'17km · 6h40',en:'17km · 6h40'},color:'#e53935',
-   d:{dist:'16.7 km',dur:{fr:'6h40',en:'6h40'},alt:'1500m',
-     note:{fr:'La plus longue ! Partir tot le matin. Beaux panoramas alpins tout du long.',en:'The longest stage! Start early. Stunning alpine views throughout.'}}},
-  {day:'J3', name:'Donnas / Chemp', km:{fr:'15km · 4h50',en:'15km · 4h50'},color:'#f57c00',
-   d:{dist:'14.6 km',dur:{fr:'4h50',en:'4h50'},alt:'900m',
-     note:{fr:"ETAPE CULTE. Village de Chemp habite par 1 seul homme. Musee en plein air. Vignobles en terrasses.",en:'ICONIC STAGE. Village of Chemp — inhabited by just 1 person. Open-air museum. Spectacular terraced vineyards.'}}},
-  {day:'J4', name:'Arnad', km:{fr:'13km · 5h30',en:'13km · 5h30'},color:'#e53935',
-   d:{dist:'12.5 km',dur:{fr:'5h30',en:'5h30'},alt:'1400m',
-     note:{fr:'Fortifications napoleoniennes. 2 chateaux Vallaise. Magnifique foret de chataigniers.',en:'Napoleonic fortifications. 2 Vallaise castles. Beautiful chestnut forest.'}}},
-  {day:'J5', name:'Challand-St-Victor', km:{fr:'13km · 5h30',en:'13km · 5h30'},color:'#e53935',
-   d:{dist:'12.8 km',dur:{fr:'5h30',en:'5h30'},alt:'1400m',
-     note:{fr:'Anciens sentiers muletiers historiques. Villages enfouis dans des forets denses.',en:'Historic mule tracks. Villages nestled in dense forests.'}}},
-  {day:'J6', name:'Verrayes / Lac Villa', km:{fr:'~13km · ~5h',en:'~13km · ~5h'},color:'#f57c00',
-   d:{dist:'~13 km',dur:{fr:'~5h',en:'~5h'},alt:'~1400m',
-     note:{fr:'Lac de Villa en reserve naturelle. Ruines du chateau Challant. Foliage octobre = panorama exceptionnel.',en:'Lake Villa in a nature reserve. Challant castle ruins. October foliage = exceptional scenery.'}}},
-  {day:'J7', name:'La Magdeleine', km:{fr:'~10km · ~4h',en:'~10km · ~4h'},color:'#f57c00',
-   d:{dist:'~10 km',dur:{fr:'~4h',en:'~4h'},alt:'~1650m',
-     note:{fr:'Etape douce pour conclure. Lac de Lod. Vue panoramique sur toute la vallee.',en:'A gentle final stage. Lod Lake. Panoramic views over the whole valley.'}}},
-  {day:'J8', name:'Skyway Montebianco', km:{fr:'Bonus',en:'Bonus'},color:'#7b1fa2',
-   d:{dist:{fr:'Bonus final',en:'Final bonus'},dur:{fr:'Telepherique depuis Courmayeur (~35 EUR)',en:'Cable car from Courmayeur (~EUR 35)'},alt:'3466m',
-     note:{fr:'Vue directe sur le Mont Blanc et le Cervin. Cave du Mont Blanc sur place. Le clou du spectacle !',en:'Direct view of Mont Blanc and the Matterhorn. Mont Blanc Cave on site. The ultimate finale!'}}}
+// ═══════════════════════════════════════════════════════
+// STAGES DATA
+// ═══════════════════════════════════════════════════════
+const stagesData=[
+  {day:'J0',name:'Pont-Saint-Martin',lat:45.5975,lng:7.7956,color:'#1565c0',alt:'345m',
+   fr:{dist:'Départ',dur:'Train Turin ~50 min, ~7 EUR',note:'Pont du Diable — pont romain du 1er s. av. J.-C. Ville médiévale pittoresque.'},
+   en:{dist:'Start',dur:'Train from Turin ~50 min, ~EUR 7',note:"Devil's Bridge — Roman bridge from the 1st century BC. Charming medieval town."}},
+  {day:'J1',name:'Lillianes',lat:45.6294,lng:7.8250,color:'#e53935',alt:'900m',
+   fr:{dist:'8.2 km',dur:'4h00',note:'Première étape tranquille. Village de Perloz. Mise en jambes idéale.'},
+   en:{dist:'8.2 km',dur:'4h00',note:'Easy first stage. Village of Perloz. Perfect warm-up for the group.'}},
+  {day:'J2',name:'Fontainemore',lat:45.6489,lng:7.8511,color:'#e53935',alt:'1500m',
+   fr:{dist:'16.7 km',dur:'6h40',note:'La plus longue ! Partir tôt le matin. Panoramas alpins tout du long.'},
+   en:{dist:'16.7 km',dur:'6h40',note:'The longest stage! Start early. Stunning alpine views throughout.'}},
+  {day:'J3',name:'Donnas',lat:45.6008,lng:7.7481,color:'#f57c00',alt:'900m',
+   fr:{dist:'14.6 km',dur:'4h50',note:'ÉTAPE CULTE. Village de Chemp habité par 1 seul homme. Vignobles en terrasses.'},
+   en:{dist:'14.6 km',dur:'4h50',note:"ICONIC STAGE. Village of Chemp — inhabited by just 1 person. Spectacular terraced vineyards."}},
+  {day:'J4',name:'Arnad',lat:45.6175,lng:7.7183,color:'#e53935',alt:'1400m',
+   fr:{dist:'12.5 km',dur:'5h30',note:'Fortifications napoléoniennes. 2 châteaux Vallaise. Forêt de châtaigniers.'},
+   en:{dist:'12.5 km',dur:'5h30',note:'Napoleonic fortifications. 2 Vallaise castles. Beautiful chestnut forest.'}},
+  {day:'J5',name:'Challand-St-Victor',lat:45.6711,lng:7.6389,color:'#e53935',alt:'1400m',
+   fr:{dist:'12.8 km',dur:'5h30',note:'Anciens sentiers muletiers historiques. Villages enfouis dans des forêts denses.'},
+   en:{dist:'12.8 km',dur:'5h30',note:'Historic mule tracks. Villages nestled in dense forests.'}},
+  {day:'J6',name:'Verrayes / Lac Villa',lat:45.7175,lng:7.5133,color:'#f57c00',alt:'~1400m',
+   fr:{dist:'~13 km',dur:'~5h',note:'Lac de Villa en réserve naturelle. Ruines du château Challant. Foliage octobre = panorama exceptionnel.'},
+   en:{dist:'~13 km',dur:'~5h',note:'Lake Villa in a nature reserve. Challant castle ruins. October foliage = exceptional scenery.'}},
+  {day:'J7',name:'La Magdeleine',lat:45.7633,lng:7.5644,color:'#f57c00',alt:'~1650m',
+   fr:{dist:'~10 km',dur:'~4h',note:'Étape douce pour conclure. Lac de Lod. Vue panoramique sur toute la vallée.'},
+   en:{dist:'~10 km',dur:'~4h',note:'A gentle final stage. Lod Lake. Panoramic views over the whole valley.'}},
+  {day:'J8',name:'Skyway Montebianco',lat:45.7953,lng:6.9803,color:'#7b1fa2',alt:'3466m',
+   fr:{dist:'Bonus',dur:'Téléphérique Courmayeur (~35 EUR)',note:'Vue directe sur le Mont Blanc et le Cervin. Cave du Mont Blanc sur place. Le clou du spectacle !'},
+   en:{dist:'Bonus',dur:'Cable car from Courmayeur (~EUR 35)',note:'Direct view of Mont Blanc and the Matterhorn. Mont Blanc Cave on site. The ultimate finale!'}}
 ];
 
-// ══════════════════════════════════════════
-// ROLES DATA (bilingual tasks)
-// ══════════════════════════════════════════
-const rolesData = [
-  { id:'chef', icon:'👑', title:{fr:'Chef de Projet',en:'Project Manager'}, color:'#f9a825', defaultName:'Amine Bounadi',
-    tasks:{
-      fr:["Confirmer la liste des 8 participants avant fin juillet","Coordonner les 5 responsables et suivre l'avancement","Partager ce lien au groupe WhatsApp","Organiser 1 appel groupe en septembre pour point complet","Gerer les impondérables et arbitrages de derniere minute","S'assurer que tout le monde a son assurance et sa CEAM","Creer un pot commun pour les depenses partagees (Tricount ?)","Confirmer que les hebergements sont reserves avant fin aout"],
-      en:["Confirm the list of 8 participants before end of July","Coordinate the 5 team leads and track progress","Share this link with the WhatsApp group","Organise a group call in September for a full check-in","Handle any last-minute issues and decisions","Make sure everyone has their insurance and EHIC card","Set up a shared kitty for group expenses (Tricount?)","Confirm all accommodation is booked before end of August"]
-    }
-  },
-  { id:'transport', icon:'✈️🏠', title:{fr:'Transport & Hebergements',en:'Transport & Accommodation'}, color:'#f57c00', defaultName:'', hasCities:true,
-    tasks:{
-      fr:["Reserver tous les hebergements avant fin aout !","J1 Lillianes — B&B ou chambre chez habitant","J2 Fontainemore — rifugio ou gite","J3 Donnas — hotel ou B&B","J4 Arnad — chambre d'hotes","J5 Challand-Saint-Victor — rifugio","J6 Verrayes — gite ou B&B","J7 La Magdeleine / Antey — hotel","Coordonner les arrivees des 4 groupes a Turin le 15/10","Prevoir transfert Turin → Pont-Saint-Martin (train ~50min)","Organiser le retour J8 depuis Courmayeur (bus ~2h, ~15 EUR)","Sites utiles : lovevda.it et Booking.com"],
-      en:["Book all accommodation before end of August!","J1 Lillianes — B&B or room with a local","J2 Fontainemore — rifugio or gite","J3 Donnas — hotel or B&B","J4 Arnad — guesthouse","J5 Challand-Saint-Victor — rifugio","J6 Verrayes — gite or B&B","J7 La Magdeleine / Antey — hotel","Coordinate the 4 groups' arrivals in Turin on 15/10","Arrange transfer Turin → Pont-Saint-Martin (train ~50 min)","Organise return from Courmayeur on day 8 (bus ~2h, ~EUR 15)","Useful sites: lovevda.it and Booking.com"]
-    }
-  },
-  { id:'nav', icon:'🧭', title:{fr:'Navigation',en:'Navigation'}, color:'#2979ff', defaultName:'Elias Callaert',
-    tasks:{
-      fr:["✓ Itineraire Cammino Balteo selectionne","✓ 8 etapes planifiees (96km, 8 jours)","✓ Site officiel identifie : balteus.lovevda.it","Telecharger les GPX de chaque etape avant le depart","Installer appli GPS offline sur le telephone (Gaia GPS)","Briefing oral du groupe chaque matin avant le depart","Point meteo 48h avant depart + veille quotidienne sur place","Prevoir plan B en cas de meteo defavorable","Partager la trace GPX sur les telephones de tous"],
-      en:["✓ Cammino Balteo route selected","✓ 8 stages planned (96km, 8 days)","✓ Official website identified: balteus.lovevda.it","Download GPX files for each stage before departure","Install offline GPS app on phone (Gaia GPS)","Daily morning briefing for the group before each stage","Weather check 48h before departure + daily monitoring on site","Prepare a backup plan in case of bad weather","Share GPX track on everyone's phone"]
-    }
-  },
-  { id:'materiel', icon:'🎒🍕', title:{fr:'Materiel & Nourriture',en:'Gear & Food'}, color:'#7b1fa2', defaultName:'',
-    tasks:{
-      fr:["Envoyer la checklist materiel complete au groupe avant septembre","Verifier chaussures de rando impermeables pour tous — OBLIGATOIRE","Sac a dos 30-40L par personne","Veste de pluie + couche chaude (0-5°C la nuit en altitude)","Batons de marche (fortement conseilles)","Lampe frontale + anti-ampoules + creme solaire","Inventaire groupe : qui a quoi pour eviter les doublons","Sondage regimes alimentaires au groupe (halal ?)","Organiser les lunches : sandwiches a preparer chaque matin","Snacks pour les etapes : barres energetiques, fruits secs","Budget repas : prevoir ~200 EUR/personne pour 8 jours"],
-      en:["Send the full gear checklist to the group before September","Check everyone has waterproof hiking boots — MANDATORY","30-40L backpack per person","Rain jacket + warm layer (0-5°C at night at altitude)","Trekking poles (strongly recommended)","Headlamp + blister prevention + sunscreen","Group gear inventory: who has what to avoid duplicates","Survey dietary requirements in the group (halal?)","Organise lunches: sandwiches to prepare each morning","Trail snacks: energy bars, dried fruit","Meal budget: plan ~EUR 200/person for 8 days"]
-    }
-  },
-  { id:'secu', icon:'🚑', title:{fr:'Securite',en:'Safety'}, color:'#00838f', defaultName:'Ismail Alami',
-    tasks:{
-      fr:["Rappeler a tous : 112 (urgences) et 118 (montagne)","Verifier que chacun a une assurance rapatriement valide","CEAM obligatoire pour les ressortissants europeens","Marocains : souscrire a une assurance voyage internationale","Partager l'itineraire complet avec un proche reste au pays","Preparer 1 trousse de secours pour le groupe (8 personnes)","Rappel : medicaments perso = responsabilite de chacun","Protocole si blessure grave : appel 118 + point GPS + groupe s'arrete","Altitude max ~1650m : risque altitude minimal, parfait pour debutants","Rappel securite ampoules : cremes preventives a appliquer des J1"],
-      en:["Remind everyone: 112 (emergency) and 118 (mountain rescue)","Confirm everyone has valid repatriation insurance","EHIC card mandatory for EU nationals","Moroccan members: take out international travel insurance","Share full itinerary with a contact staying back home","Prepare 1 group first-aid kit (for 8 people)","Reminder: personal medication is each person's responsibility","Protocol for serious injury: call 118 + GPS location + group stops","Max altitude ~1650m: minimal altitude sickness risk, perfect for beginners","Blister prevention: apply preventive cream from day 1"]
-    }
-  }
+// ═══════════════════════════════════════════════════════
+// ROLES DATA
+// ═══════════════════════════════════════════════════════
+const rolesData=[
+  {id:'chef',icon:'👑',title:{fr:'Chef de Projet',en:'Project Manager'},color:'#f9a825',defaultName:'Amine Bounadi',
+   tasks:{
+     fr:["Confirmer la liste des 8 participants avant fin juillet","Coordonner les 5 responsables et suivre l'avancement","Partager ce lien au groupe WhatsApp","Organiser 1 appel groupe en septembre pour point complet","Gérer les imprévus et arbitrages de dernière minute","S'assurer que tout le monde a son assurance et sa CEAM","Créer un pot commun pour les dépenses partagées (Tricount ?)","Confirmer que les hébergements sont réservés avant fin août"],
+     en:["Confirm list of 8 participants before end of July","Coordinate the 5 team leads and track progress","Share this link with the WhatsApp group","Organise a group call in September for a full check-in","Handle any last-minute issues and decisions","Make sure everyone has insurance and an EHIC card","Set up a shared kitty for group expenses (Tricount?)","Confirm all accommodation is booked before end of August"]
+   }},
+  {id:'transport',icon:'✈️🏠',title:{fr:'Transport & Hébergements',en:'Transport & Accommodation'},color:'#f57c00',defaultName:'',hasCities:true,
+   tasks:{
+     fr:["Réserver tous les hébergements avant fin août !","J1 Lillianes — B&B ou chambre chez habitant","J2 Fontainemore — rifugio ou gîte","J3 Donnas — hôtel ou B&B","J4 Arnad — chambre d'hôtes","J5 Challand-Saint-Victor — rifugio","J6 Verrayes — gîte ou B&B","J7 La Magdeleine / Antey — hôtel","Coordonner les arrivées des 4 groupes à Turin le 15/10","Prévoir transfert Turin → Pont-Saint-Martin (train ~50min)","Organiser le retour J8 depuis Courmayeur (bus ~2h, ~15 EUR)","Sites utiles : lovevda.it et Booking.com"],
+     en:["Book all accommodation before end of August!","J1 Lillianes — B&B or room with a local","J2 Fontainemore — rifugio or gite","J3 Donnas — hotel or B&B","J4 Arnad — guesthouse","J5 Challand-Saint-Victor — rifugio","J6 Verrayes — gite or B&B","J7 La Magdeleine / Antey — hotel","Coordinate the 4 groups' arrivals in Turin on 15/10","Arrange transfer Turin → Pont-Saint-Martin (train ~50 min)","Organise return from Courmayeur on day 8 (bus ~2h, ~EUR 15)","Useful sites: lovevda.it and Booking.com"]
+   }},
+  {id:'nav',icon:'🧭',title:{fr:'Navigation',en:'Navigation'},color:'#2979ff',defaultName:'Elias Callaert',
+   tasks:{
+     fr:["✓ Itinéraire Cammino Balteo sélectionné","✓ 8 étapes planifiées (96km, 8 jours)","✓ Site officiel identifié : balteus.lovevda.it","Télécharger les GPX de chaque étape avant le départ","Installer appli GPS offline (Gaia GPS ou Maps.me)","Briefing oral du groupe chaque matin avant le départ","Point météo 48h avant départ + veille quotidienne sur place","Prévoir plan B en cas de météo défavorable","Partager la trace GPX sur les téléphones de tous"],
+     en:["✓ Cammino Balteo route selected","✓ 8 stages planned (96km, 8 days)","✓ Official website identified: balteus.lovevda.it","Download GPX files for each stage before departure","Install offline GPS app (Gaia GPS or Maps.me)","Daily morning briefing for the group before each stage","Weather check 48h before departure + daily monitoring on site","Prepare a backup plan in case of bad weather","Share GPX track on everyone's phone"]
+   }},
+  {id:'materiel',icon:'🎒🍕',title:{fr:'Matériel & Nourriture',en:'Gear & Food'},color:'#7b1fa2',defaultName:'',
+   tasks:{
+     fr:["Envoyer la checklist matériel complète au groupe avant septembre","Vérifier chaussures de rando imperméables pour tous — OBLIGATOIRE","Sac à dos 30-40L par personne","Veste de pluie + couche chaude (0-5°C la nuit en altitude)","Bâtons de marche (fortement conseillés)","Lampe frontale + anti-ampoules + crème solaire","Inventaire groupe : qui a quoi pour éviter les doublons","Sondage régimes alimentaires au groupe (halal ?)","Organiser les lunches : sandwiches à préparer chaque matin","Snacks pour les étapes : barres énergétiques, fruits secs","Budget repas : prévoir ~200 EUR/personne pour 8 jours"],
+     en:["Send the full gear checklist to the group before September","Check everyone has waterproof hiking boots — MANDATORY","30-40L backpack per person","Rain jacket + warm layer (0-5°C at night at altitude)","Trekking poles (strongly recommended)","Headlamp + blister prevention + sunscreen","Group gear inventory: who has what to avoid duplicates","Survey dietary requirements in the group (halal?)","Organise lunches: sandwiches to prepare each morning","Trail snacks: energy bars, dried fruit","Meal budget: plan ~EUR 200/person for 8 days"]
+   }},
+  {id:'secu',icon:'🚑',title:{fr:'Sécurité',en:'Safety'},color:'#00838f',defaultName:'Ismail Alami',
+   tasks:{
+     fr:["Rappeler à tous : 112 (urgences) et 118 (montagne)","Vérifier que chacun a une assurance rapatriement valide","CEAM obligatoire pour les ressortissants européens","Marocains : souscrire à une assurance voyage internationale","Partager l'itinéraire complet avec un proche resté au pays","Préparer 1 trousse de secours pour le groupe (8 personnes)","Rappel : médicaments perso = responsabilité de chacun","Protocole si blessure grave : appel 118 + point GPS + groupe s'arrête","Altitude max ~1650m : risque altitude minimal, parfait pour débutants","Rappel sécurité ampoules : crèmes préventives à appliquer dès J1"],
+     en:["Remind everyone: 112 (emergency) and 118 (mountain rescue)","Confirm everyone has valid repatriation insurance","EHIC card mandatory for EU nationals","Moroccan members: take out international travel insurance","Share full itinerary with a contact staying back home","Prepare 1 group first-aid kit (for 8 people)","Reminder: personal medication is each person's responsibility","Protocol for serious injury: call 118 + GPS location + group stops","Max altitude ~1650m: minimal altitude sickness risk, perfect for beginners","Blister prevention: apply preventive cream from day 1"]
+   }}
 ];
 
-// ══════════════════════════════════════════
-// INFO GRID DATA (bilingual)
-// ══════════════════════════════════════════
-const infoData = {
-  fr: [
-    { icon:'🚨', title:'Urgences', sos:true, items:['<b>112</b> — Urgences generales (toute l\'UE)','<b>118</b> — Soccorso Alpino (montagne)','<b>113</b> — Police italienne','Donner ses coordonnees GPS si appel 118','Sauvetage helitreuille possible jusqu\'a 1650m'] },
-    { icon:'📋', title:'Documents', items:['Carte d\'identite ou passeport valide','<b>CEAM</b> — Carte Europeenne AM (UE)','🇲🇦 Marocains : passeport + assurance voyage','Assurance rapatriement recommandee pour tous','Photocopier ses docs avant depart'] },
-    { icon:'🌤', title:'Meteo Octobre', items:['Journee : <b>8–16°C</b> selon altitude','Nuits : <b>1–6°C</b> en altitude','Foliage = couleurs magnifiques garanties','Risque pluie modere — veste impermeable obligatoire','Neige possible au-dessus de 2000m (hors itineraire)'] },
-    { icon:'🚂', title:'Arriver sur place', items:['Hub principal : <b>Turin Porta Nuova (TRN)</b>','Hub alternatif : <b>Geneve (GVA)</b> + train ~3h30','Train Turin → Pont-Saint-Martin : ~50 min, ~7 EUR','<b>RDV : PSM le 15/10 avant 18h00</b>','Retour J8 : bus Courmayeur → Turin (~2h, ~15 EUR)'] },
-    { icon:'✈️', title:'Vols par ville', items:['🇧🇪 <b>Bruxelles</b> : BRU→TRN ou BRU→GVA (~60–100 EUR)','🇫🇷 <b>Paris</b> : CDG→TRN (EasyJet) ou TGV (~50–90 EUR)','🇨🇭 <b>Bale</b> : BSL→TRN ou train via Geneve (~80–120 EUR)','🇲🇦 <b>Maroc</b> : CMN/RAK via Paris/Madrid (~150–250 EUR)','<a href="https://www.skyscanner.fr" target="_blank">Skyscanner</a> · <a href="https://www.google.com/flights" target="_blank">Google Flights</a>'] },
-    { icon:'🔗', title:'Liens utiles', items:['<a href="https://balteus.lovevda.it/fr/etapes" target="_blank">balteus.lovevda.it</a> — GPX + carte officielle','<a href="https://www.lovevda.it" target="_blank">lovevda.it</a> — Hebergements VDA','<a href="https://www.trenitalia.com" target="_blank">trenitalia.com</a> — Trains italiens','<a href="https://www.skywaymontebianco.com" target="_blank">skywaymontebianco.com</a> — Skyway','<a href="https://www.meteoblue.com" target="_blank">meteoblue.com</a> — Meteo montagne'] }
+// ═══════════════════════════════════════════════════════
+// INFO GRID
+// ═══════════════════════════════════════════════════════
+const infoData={
+  fr:[
+    {icon:'🚨',title:'Urgences',sos:true,items:['<b>112</b> — Urgences générales (toute l\'UE)','<b>118</b> — Soccorso Alpino (montagne)','<b>113</b> — Police italienne','Donner ses coordonnées GPS si appel 118','Sauvetage hélitreuille possible jusqu\'à 1650m']},
+    {icon:'📋',title:'Documents',items:['Carte d\'identité ou passeport valide','<b>CEAM</b> — Carte Européenne AM (UE)','🇲🇦 Marocains : passeport + assurance voyage','Assurance rapatriement recommandée pour tous','Photocopier ses docs avant départ']},
+    {icon:'🌤',title:'Météo Octobre',items:['Journée : <b>8–16°C</b> selon altitude','Nuits : <b>1–6°C</b> en altitude','Foliage = couleurs magnifiques garanties','Risque pluie modéré — veste imperméable obligatoire','Neige possible au-dessus de 2000m (hors itinéraire)']},
+    {icon:'🚂',title:'Arriver sur place',items:['Hub principal : <b>Turin Porta Nuova (TRN)</b>','Hub alternatif : <b>Genève (GVA)</b> + train ~3h30','Train Turin → Pont-Saint-Martin : ~50 min, ~7 EUR','<b>RDV : PSM le 15/10 avant 18h00</b>','Retour J8 : bus Courmayeur → Turin (~2h, ~15 EUR)']},
+    {icon:'✈️',title:'Vols par ville',items:['🇧🇪 <b>Bruxelles</b> : BRU→TRN ou BRU→GVA (~60–100 EUR)','🇫🇷 <b>Paris</b> : CDG→TRN (EasyJet) ou TGV (~50–90 EUR)','🇨🇭 <b>Bâle</b> : BSL→TRN ou train via Genève (~80–120 EUR)','🇲🇦 <b>Maroc</b> : CMN/RAK via Paris/Madrid (~150–250 EUR)','<a href="https://www.skyscanner.fr" target="_blank">Skyscanner</a> · <a href="https://www.google.com/flights" target="_blank">Google Flights</a>']},
+    {icon:'🔗',title:'Liens utiles',items:['<a href="https://balteus.lovevda.it/fr/etapes" target="_blank">balteus.lovevda.it</a> — GPX + carte officielle','<a href="https://www.lovevda.it" target="_blank">lovevda.it</a> — Hébergements VDA','<a href="https://www.trenitalia.com" target="_blank">trenitalia.com</a> — Trains italiens','<a href="https://www.skywaymontebianco.com" target="_blank">skywaymontebianco.com</a> — Skyway','<a href="https://www.meteoblue.com" target="_blank">meteoblue.com</a> — Météo montagne']}
   ],
-  en: [
-    { icon:'🚨', title:'Emergency Numbers', sos:true, items:['<b>112</b> — General emergency (all EU)','<b>118</b> — Soccorso Alpino (mountain rescue)','<b>113</b> — Italian police','Give your GPS coordinates when calling 118','Helicopter rescue available up to 1650m'] },
-    { icon:'📋', title:'Documents', items:['Valid ID card or passport','<b>EHIC</b> — European Health Insurance Card (EU)','🇲🇦 Moroccan members: passport + travel insurance','Repatriation insurance recommended for everyone','Photocopy your documents before departure'] },
-    { icon:'🌤', title:'October Weather', items:['Daytime: <b>8–16°C</b> depending on altitude','Nights: <b>1–6°C</b> at altitude','Autumn foliage = spectacular colours guaranteed','Moderate rain risk — waterproof jacket mandatory','Snow possible above 2000m (outside our route)'] },
-    { icon:'🚂', title:'Getting There', items:['Main hub: <b>Turin Porta Nuova (TRN)</b>','Alternative hub: <b>Geneva (GVA)</b> + train ~3h30','Train Turin → Pont-Saint-Martin: ~50 min, ~EUR 7','<b>Meeting point: PSM on 15/10 before 6pm</b>','Return Day 8: bus Courmayeur → Turin (~2h, ~EUR 15)'] },
-    { icon:'✈️', title:'Flights by City', items:['🇧🇪 <b>Brussels</b>: BRU→TRN or BRU→GVA (~EUR 60–100)','🇫🇷 <b>Paris</b>: CDG→TRN (EasyJet) or TGV (~EUR 50–90)','🇨🇭 <b>Basel</b>: BSL→TRN or train via Geneva (~EUR 80–120)','🇲🇦 <b>Morocco</b>: CMN/RAK via Paris/Madrid (~EUR 150–250)','<a href="https://www.skyscanner.fr" target="_blank">Skyscanner</a> · <a href="https://www.google.com/flights" target="_blank">Google Flights</a>'] },
-    { icon:'🔗', title:'Useful Links', items:['<a href="https://balteus.lovevda.it/en/stages" target="_blank">balteus.lovevda.it</a> — GPX + official map','<a href="https://www.lovevda.it/en" target="_blank">lovevda.it</a> — Aosta Valley accommodation','<a href="https://www.trenitalia.com/en" target="_blank">trenitalia.com</a> — Italian trains','<a href="https://www.skywaymontebianco.com" target="_blank">skywaymontebianco.com</a> — Skyway','<a href="https://www.meteoblue.com" target="_blank">meteoblue.com</a> — Mountain weather'] }
+  en:[
+    {icon:'🚨',title:'Emergency Numbers',sos:true,items:['<b>112</b> — General emergency (all EU)','<b>118</b> — Soccorso Alpino (mountain rescue)','<b>113</b> — Italian police','Give your GPS coordinates when calling 118','Helicopter rescue available up to 1650m']},
+    {icon:'📋',title:'Documents',items:['Valid ID card or passport','<b>EHIC</b> — European Health Insurance Card (EU)','🇲🇦 Moroccan members: passport + travel insurance','Repatriation insurance recommended for everyone','Photocopy your documents before departure']},
+    {icon:'🌤',title:'October Weather',items:['Daytime: <b>8–16°C</b> depending on altitude','Nights: <b>1–6°C</b> at altitude','Autumn foliage = spectacular colours guaranteed','Moderate rain risk — waterproof jacket mandatory','Snow possible above 2000m (outside our route)']},
+    {icon:'🚂',title:'Getting There',items:['Main hub: <b>Turin Porta Nuova (TRN)</b>','Alternative hub: <b>Geneva (GVA)</b> + train ~3h30','Train Turin → Pont-Saint-Martin: ~50 min, ~EUR 7','<b>Meeting point: PSM on 15/10 before 6pm</b>','Return Day 8: bus Courmayeur → Turin (~2h, ~EUR 15)']},
+    {icon:'✈️',title:'Flights by City',items:['🇧🇪 <b>Brussels</b>: BRU→TRN or BRU→GVA (~EUR 60–100)','🇫🇷 <b>Paris</b>: CDG→TRN (EasyJet) or TGV (~EUR 50–90)','🇨🇭 <b>Basel</b>: BSL→TRN or train via Geneva (~EUR 80–120)','🇲🇦 <b>Morocco</b>: CMN/RAK via Paris/Madrid (~EUR 150–250)','<a href="https://www.skyscanner.fr" target="_blank">Skyscanner</a> · <a href="https://www.google.com/flights" target="_blank">Google Flights</a>']},
+    {icon:'🔗',title:'Useful Links',items:['<a href="https://balteus.lovevda.it/en/stages" target="_blank">balteus.lovevda.it</a> — GPX + official map','<a href="https://www.lovevda.it/en" target="_blank">lovevda.it</a> — Aosta Valley accommodation','<a href="https://www.trenitalia.com/en" target="_blank">trenitalia.com</a> — Italian trains','<a href="https://www.skywaymontebianco.com" target="_blank">skywaymontebianco.com</a> — Skyway','<a href="https://www.meteoblue.com" target="_blank">meteoblue.com</a> — Mountain weather']}
   ]
 };
 
-function renderInfoGrid() {
-  const grid = document.getElementById('info-grid');
-  grid.innerHTML = '';
-  infoData[lang].forEach(card => {
-    const el = document.createElement('div');
-    el.className = 'info-card' + (card.sos ? ' sos' : '');
-    el.innerHTML = `<h4>${card.icon} ${card.title}</h4><ul>${card.items.map(i=>`<li>${i}</li>`).join('')}</ul>`;
-    grid.appendChild(el);
+function renderInfoGrid(){
+  const g=document.getElementById('info-grid');g.innerHTML='';
+  infoData[lang].forEach(c=>{
+    const el=document.createElement('div');
+    el.className='info-card'+(c.sos?' sos':'');
+    el.innerHTML=`<h4>${c.icon} ${c.title}</h4><ul>${c.items.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+    g.appendChild(el);
   });
 }
 
-// ══════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// GALLERY DATA
+// ═══════════════════════════════════════════════════════
+const galleryData=[
+  {img:'https://picsum.photos/seed/aosta-autumn-01/600/380',
+   fr:{title:'Foliage Automnal 🍂',desc:"En octobre, les forêts de la Valle d'Aoste explosent de couleurs — oranges, rouges et ors. Un cadre magique pour randonner."},
+   en:{title:'Autumn Foliage 🍂',desc:"In October, the Aosta Valley forests explode with colour — oranges, reds and golds. A magical backdrop for hiking."}},
+  {img:'https://picsum.photos/seed/alpine-trail-02/600/380',
+   fr:{title:'Sentiers Historiques 🏔️',desc:"Anciens chemins muletiers médiévaux jalonnant les pentes. L'histoire sous nos pieds à chaque étape."},
+   en:{title:'Historic Trails 🏔️',desc:"Ancient medieval mule tracks lining the slopes. History under our feet at every stage."}},
+  {img:'https://picsum.photos/seed/mountain-lake-03/600/380',
+   fr:{title:'Lac de Villa (J6) 💧',desc:"Niché dans une réserve naturelle, le lac de Villa offre un spectacle fascinant, surtout en automne."},
+   en:{title:'Lake Villa (Day 6) 💧',desc:"Nestled in a nature reserve, Lake Villa is a spectacular sight, especially in autumn."}},
+  {img:'https://picsum.photos/seed/montblanc-cable-04/600/380',
+   fr:{title:'Skyway Montebianco (J8) ✨',desc:"Le clou du spectacle : vue directe sur le Mont Blanc depuis 3466m. Un bonus exceptionnel pour clôturer l'aventure."},
+   en:{title:'Skyway Montebianco (Day 8) ✨',desc:"The ultimate finale: a direct view of Mont Blanc from 3,466m. An exceptional bonus to close out the adventure."}},
+  {img:'https://picsum.photos/seed/vineyard-terrace-05/600/380',
+   fr:{title:'Vignobles de Donnas (J3) 🍇',desc:"Donnas abrite les vignobles les plus septentrionaux d'Italie. L'étape la plus culturelle du parcours."},
+   en:{title:'Donnas Vineyards (Day 3) 🍇',desc:"Donnas is home to Italy's northernmost vineyards. The most culturally rich stage of the route."}},
+  {img:'https://picsum.photos/seed/mountain-rifugio-06/600/380',
+   fr:{title:'Rifugi & Convivialité 🍽️',desc:"Chaque soir, un rifugio chaleureux attend le groupe — plats valdôtains traditionnels et vue sur les sommets garantis."},
+   en:{title:'Rifugi & Conviviality 🍽️',desc:"Each evening, a cosy rifugio awaits — traditional Valdostan food and mountain views guaranteed."}}
+];
+
+function renderGallery(){
+  const g=document.getElementById('gallery-grid');g.innerHTML='';
+  galleryData.forEach(c=>{
+    const d=c[lang]||c.fr;
+    const el=document.createElement('div');
+    el.className='gallery-card';
+    el.innerHTML=`<img class="gallery-img" src="${c.img}" alt="${d.title}" loading="lazy"/><div class="gallery-body"><div class="gallery-title">${d.title}</div><div class="gallery-desc">${d.desc}</div></div>`;
+    g.appendChild(el);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
 // SUPABASE
-// ══════════════════════════════════════════
-const SUPA_URL = 'https://uhcuxjbinilfsvidhjtc.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoY3V4amJpbmlsZnN2aWRoanRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMTEwMTEsImV4cCI6MjA5MzY4NzAxMX0.-azwbTc5gcXykQmSeA0jLwbkqc_EWrptGZtP9b1Ybqs';
-const db = supabase.createClient(SUPA_URL, SUPA_KEY);
-const syncDot = document.getElementById('sync-dot');
-const syncMsg = document.getElementById('sync-msg');
-let saveTimer = {};
-let state = {};
+// ═══════════════════════════════════════════════════════
+const SUPA_URL='https://uhcuxjbinilfsvidhjtc.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoY3V4amJpbmlsZnN2aWRoanRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMTEwMTEsImV4cCI6MjA5MzY4NzAxMX0.-azwbTc5gcXykQmSeA0jLwbkqc_EWrptGZtP9b1Ybqs';
+const db=supabase.createClient(SUPA_URL,SUPA_KEY);
+const syncDot=document.getElementById('sync-dot');
+const syncMsg=document.getElementById('sync-msg');
+let saveTimer={};
+let state={};
 
-function setSyncMsg(key, extra) { syncMsg.textContent = t(key) + (extra ? ' · ' + extra : ''); }
+function setSyncMsg(k,extra){syncMsg.textContent=t(k)+(extra?' · '+extra:'');}
 
-async function loadState() {
+async function loadState(){
   setSyncMsg('sync_connecting');
-  try {
-    const { data, error } = await db.from('trek_state').select('*');
-    if (error) throw error;
-    data.forEach(r => { state[r.key] = r.value; });
-    syncDot.className = 'connected';
-    setSyncMsg('sync_connected');
-  } catch(e) {
-    syncDot.className = '';
-    setSyncMsg('sync_offline');
-    try { state = JSON.parse(localStorage.getItem('balteo_v3') || '{}'); } catch(_) {}
+  try{
+    const{data,error}=await db.from('trek_state').select('*');
+    if(error)throw error;
+    data.forEach(r=>{state[r.key]=r.value;});
+    syncDot.className='connected';setSyncMsg('sync_connected');
+  }catch(e){
+    syncDot.className='';setSyncMsg('sync_offline');
+    try{state=JSON.parse(localStorage.getItem('balteo_v4')||'{}');}catch(_){}
   }
-  renderAll();
+  renderAll();renderParticipants();renderExpenses();
 }
 
-async function saveRole(id) {
-  const val = state[id] || {};
-  try {
-    localStorage.setItem('balteo_v3', JSON.stringify(state));
-    syncDot.className = 'saving';
-    setSyncMsg('sync_saving');
-    const { error } = await db.from('trek_state').upsert({ key:id, value:val, updated_at: new Date().toISOString() });
-    if (error) throw error;
-    syncDot.className = 'connected';
-    const time = new Date().toLocaleTimeString(lang === 'fr' ? 'fr-FR' : 'en-GB', {hour:'2-digit',minute:'2-digit'});
-    syncMsg.textContent = t('sync_saved') + ' · ' + time;
-  } catch(e) {
-    syncDot.className = '';
-    setSyncMsg('sync_offline');
+async function saveKey(key){
+  const val=state[key]||{};
+  try{
+    localStorage.setItem('balteo_v4',JSON.stringify(state));
+    syncDot.className='saving';setSyncMsg('sync_saving');
+    const{error}=await db.from('trek_state').upsert({key,value:val,updated_at:new Date().toISOString()});
+    if(error)throw error;
+    syncDot.className='connected';
+    const time=new Date().toLocaleTimeString(lang==='fr'?'fr-FR':'en-GB',{hour:'2-digit',minute:'2-digit'});
+    syncMsg.textContent=t('sync_saved')+' · '+time;
+  }catch(e){
+    syncDot.className='';setSyncMsg('sync_offline');
   }
 }
 
-function debounceSave(id) { clearTimeout(saveTimer[id]); saveTimer[id] = setTimeout(() => saveRole(id), 600); }
-function getRoleState(id) { if (!state[id]) state[id] = {name:'',tasks:{},custom:[]}; if (!state[id].custom) state[id].custom=[]; return state[id]; }
+function debounce(key){clearTimeout(saveTimer[key]);saveTimer[key]=setTimeout(()=>saveKey(key),700);}
+function getS(k){if(!state[k])state[k]={};return state[k];}
 
-// ══════════════════════════════════════════
-// MAP
-// ══════════════════════════════════════════
-const tip = document.getElementById('tip');
-function buildMap() {
-  const row = document.getElementById('stages-row');
-  row.innerHTML = '';
-  stagesData.forEach(s => {
-    const el = document.createElement('div');
-    el.className = 'stage-pin';
-    const km = typeof s.km === 'object' ? s.km[lang] : s.km;
-    el.innerHTML = `<div class="stage-tag">${s.day}</div><div class="stage-dot" style="background:${s.color}"></div><div class="stage-lbl">${s.name}</div><div class="stage-km">${km}</div>`;
-    el.addEventListener('mouseenter', () => {
-      const d = s.d;
-      const dist = typeof d.dist === 'object' ? d.dist[lang] : d.dist;
-      const dur = typeof d.dur === 'object' ? d.dur[lang] : d.dur;
-      const note = typeof d.note === 'object' ? d.note[lang] : d.note;
-      document.getElementById('tip-title').textContent = s.day + ' — ' + s.name;
-      document.getElementById('tip-body').innerHTML =
-        `<div class="tip-row">${t('tip_dist')} : <b>${dist}</b></div>` +
-        `<div class="tip-row">${t('tip_dur')} : <b>${dur}</b></div>` +
-        `<div class="tip-row">${t('tip_alt')} : <b>${d.alt}</b></div>` +
-        `<div class="tip-note">${note}</div>`;
-      const r = el.getBoundingClientRect();
-      let left = r.left + r.width/2 - 110;
-      left = Math.max(8, Math.min(left, window.innerWidth - 280));
-      tip.style.left = left+'px'; tip.style.top = (r.bottom+8)+'px';
-      tip.classList.add('show');
+// ═══════════════════════════════════════════════════════
+// COUNTDOWN
+// ═══════════════════════════════════════════════════════
+function initCountdown(){
+  const target=new Date('2026-10-15T08:00:00');
+  function tick(){
+    const diff=target-Date.now();
+    if(diff<=0){
+      document.getElementById('cd-days').textContent='0';
+      document.getElementById('cd-hours').textContent='00';
+      document.getElementById('cd-mins').textContent='00';
+      document.getElementById('cd-secs').textContent='00';
+      return;
+    }
+    const d=Math.floor(diff/86400000);
+    const h=Math.floor((diff%86400000)/3600000);
+    const m=Math.floor((diff%3600000)/60000);
+    const s=Math.floor((diff%60000)/1000);
+    document.getElementById('cd-days').textContent=d;
+    document.getElementById('cd-hours').textContent=String(h).padStart(2,'0');
+    document.getElementById('cd-mins').textContent=String(m).padStart(2,'0');
+    document.getElementById('cd-secs').textContent=String(s).padStart(2,'0');
+  }
+  tick();setInterval(tick,1000);
+}
+
+// ═══════════════════════════════════════════════════════
+// LEAFLET MAP
+// ═══════════════════════════════════════════════════════
+let leafletMap=null;
+function initMap(){
+  if(leafletMap){leafletMap.remove();}
+  const coords=stagesData.map(s=>[s.lat,s.lng]);
+  const map=L.map('trek-map',{zoomControl:true,scrollWheelZoom:false});
+  leafletMap=map;
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+    attribution:'© <a href="https://openstreetmap.org" style="color:#90caf9">OpenStreetMap</a> © <a href="https://carto.com" style="color:#90caf9">CARTO</a>',
+    subdomains:'abcd',maxZoom:16
+  }).addTo(map);
+  // Main route polyline (J0-J7)
+  L.polyline(coords.slice(0,8),{color:'#ef5350',weight:3,opacity:0.8,dashArray:'8,4'}).addTo(map);
+  // Bonus leg J7→J8 (Courmayeur) dashed purple
+  L.polyline([coords[7],coords[8]],{color:'#7b1fa2',weight:2,opacity:0.6,dashArray:'4,10'}).addTo(map);
+  // Stage markers
+  stagesData.forEach(s=>{
+    const d=s[lang]||s.fr;
+    const popup=`<div class="pop-title">${s.day} — ${s.name}</div>
+      <div class="pop-row">${t('tip_dist')}: <b>${d.dist}</b></div>
+      <div class="pop-row">${t('tip_dur')}: <b>${d.dur}</b></div>
+      <div class="pop-row">${t('tip_alt')}: <b>${s.alt}</b></div>
+      <div class="pop-note">${d.note}</div>`;
+    L.circleMarker([s.lat,s.lng],{
+      radius:s.day==='J0'?10:8,
+      fillColor:s.color,color:'#fff',weight:2,opacity:1,fillOpacity:.9
+    }).addTo(map).bindPopup(popup,{maxWidth:260}).bindTooltip(s.day+' '+s.name,{permanent:false,direction:'top'});
+  });
+  map.fitBounds(L.latLngBounds(coords),{padding:[30,30]});
+}
+
+// ═══════════════════════════════════════════════════════
+// PARTICIPANTS
+// ═══════════════════════════════════════════════════════
+const DEFAULT_PARTS=[
+  {name:'Elias Callaert',city:'Bruxelles',flight:'BRU→TRN 14/10',arrival:'14/10',notes:'Responsable Navigation'},
+  {name:'Amine Bounadi',city:'',flight:'',arrival:'',notes:'Chef de Projet'},
+  {name:'Ismail Alami',city:'Maroc',flight:'',arrival:'',notes:'Responsable Sécurité'},
+  {name:'',city:'',flight:'',arrival:'',notes:''},
+  {name:'',city:'',flight:'',arrival:'',notes:''},
+  {name:'',city:'',flight:'',arrival:'',notes:''},
+  {name:'',city:'',flight:'',arrival:'',notes:''},
+  {name:'',city:'',flight:'',arrival:'',notes:''}
+];
+
+function getParticipants(){
+  const ps=getS('participants');
+  if(!ps.slots||ps.slots.length<8){
+    ps.slots=DEFAULT_PARTS.map((d,i)=>Object.assign({},d,ps.slots&&ps.slots[i]?ps.slots[i]:{}));
+  }
+  return ps;
+}
+
+function renderParticipants(){
+  const grid=document.getElementById('participants-grid');
+  grid.innerHTML='';
+  const ps=getParticipants();
+  const fields=[
+    {key:'name',label:t('part_name'),ph:t('ph_name'),big:true},
+    {key:'city',label:t('part_city'),ph:t('ph_city')},
+    {key:'flight',label:t('part_flight'),ph:t('ph_flight')},
+    {key:'arrival',label:t('part_arrival'),ph:t('ph_arrival')},
+    {key:'notes',label:t('part_notes'),ph:t('ph_notes')},
+  ];
+  ps.slots.forEach((slot,i)=>{
+    const card=document.createElement('div');
+    card.className='part-card';
+    card.innerHTML=`<div class="part-num">👤 ${lang==='fr'?'Participant':'Participant'} ${i+1}</div>`;
+    fields.forEach(f=>{
+      const wrap=document.createElement('div');wrap.className='part-field';
+      const lbl=document.createElement('div');lbl.className='part-label';lbl.textContent=f.label;
+      const inp=document.createElement('input');
+      inp.className='part-input'+(f.big?' name-big':'');
+      inp.type='text';inp.placeholder=f.ph;inp.value=slot[f.key]||'';
+      inp.maxLength=60;
+      inp.addEventListener('change',()=>{
+        getParticipants().slots[i][f.key]=inp.value.trim();
+        debounce('participants');
+        updateExpenseCheckboxes();
+      });
+      wrap.appendChild(lbl);wrap.appendChild(inp);card.appendChild(wrap);
     });
-    el.addEventListener('mouseleave', () => tip.classList.remove('show'));
-    el.addEventListener('touchstart', e => { e.preventDefault(); el.dispatchEvent(new MouseEvent('mouseenter')); setTimeout(()=>tip.classList.remove('show'),3000); });
-    row.appendChild(el);
+    grid.appendChild(card);
   });
 }
 
-// ══════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// EXPENSE TRACKER
+// ═══════════════════════════════════════════════════════
+function getParticipantNames(){
+  const ps=getParticipants();
+  return ps.slots.map((s,i)=>s.name||(lang==='fr'?`Participant ${i+1}`:`Participant ${i+1}`));
+}
+
+function updateExpenseCheckboxes(){
+  const box=document.getElementById('exp-shared-boxes');
+  if(!box)return;
+  const names=getParticipantNames();
+  box.innerHTML=`<label class="exp-cb-row"><input type="checkbox" id="exp-all-cb" onchange="toggleAllExpCbs(this.checked)"/> <span>${t('exp_all')}</span></label>`+
+    names.map((n,i)=>`<label class="exp-cb-row"><input type="checkbox" class="exp-part-cb" data-idx="${i}" checked/> <span>${n}</span></label>`).join('');
+  document.getElementById('exp-all-cb').checked=true;
+}
+
+function toggleAllExpCbs(v){
+  document.querySelectorAll('.exp-part-cb').forEach(cb=>cb.checked=v);
+}
+
+function addExpense(){
+  const who=document.getElementById('exp-who').value.trim();
+  const amt=parseFloat(document.getElementById('exp-amount').value);
+  const desc=document.getElementById('exp-desc').value.trim();
+  if(!who||!amt||!desc){return;}
+  const sharedWith=[];
+  document.querySelectorAll('.exp-part-cb:checked').forEach(cb=>{
+    const idx=parseInt(cb.getAttribute('data-idx'));
+    sharedWith.push(getParticipantNames()[idx]);
+  });
+  if(!sharedWith.length)return;
+  const es=getS('expenses');
+  if(!es.list)es.list=[];
+  es.list.push({id:Date.now(),paidBy:who,amount:amt,desc,sharedWith,date:new Date().toLocaleDateString(lang==='fr'?'fr-BE':'en-GB',{day:'2-digit',month:'2-digit'})});
+  debounce('expenses');
+  document.getElementById('exp-who').value='';
+  document.getElementById('exp-amount').value='';
+  document.getElementById('exp-desc').value='';
+  renderExpenses();
+}
+
+function deleteExpense(id){
+  const es=getS('expenses');
+  if(!es.list)return;
+  es.list=es.list.filter(e=>e.id!==id);
+  debounce('expenses');
+  renderExpenses();
+}
+
+function renderExpenses(){
+  const es=getS('expenses');
+  const list=es.list||[];
+  // Expense list
+  const el=document.getElementById('exp-list');
+  if(!list.length){el.innerHTML=`<div class="exp-empty">${t('exp_empty')}</div>`;}
+  else{
+    el.innerHTML=list.map(e=>`
+      <div class="exp-item">
+        <div class="exp-amt">${e.amount.toFixed(2)} EUR</div>
+        <div class="exp-info">
+          <div class="exp-desc">${e.desc}</div>
+          <div class="exp-meta">${t('exp_paid_by')}: ${e.paidBy} · ${e.date} · ${t('exp_shared_with')}: ${e.sharedWith.join(', ')}</div>
+        </div>
+        <span class="exp-del" onclick="deleteExpense(${e.id})">×</span>
+      </div>`).join('');
+  }
+  // Balances
+  const names=getParticipantNames();
+  const paid={};const owed={};
+  names.forEach(n=>{paid[n]=0;owed[n]=0;});
+  list.forEach(e=>{
+    if(paid[e.paidBy]!==undefined)paid[e.paidBy]+=(e.amount||0);
+    else paid[e.paidBy]=(e.amount||0);
+    const share=(e.amount||0)/(e.sharedWith.length||1);
+    e.sharedWith.forEach(n=>{
+      if(owed[n]!==undefined)owed[n]+=share;
+      else owed[n]=share;
+    });
+  });
+  const balGrid=document.getElementById('exp-balance-grid');
+  const allNames=new Set([...names,...Object.keys(paid),...Object.keys(owed)]);
+  let html='';
+  allNames.forEach(n=>{
+    const bal=(paid[n]||0)-(owed[n]||0);
+    const cls=bal>0.01?'pos':bal<-0.01?'neg':'zero';
+    const sign=bal>0.01?'+':'';
+    html+=`<div class="exp-bal-item"><div class="exp-bal-name">${n}</div><div class="exp-bal-val ${cls}">${sign}${bal.toFixed(2)} EUR</div></div>`;
+  });
+  balGrid.innerHTML=html||`<div class="exp-settled">${t('exp_settled')}</div>`;
+  const total=list.reduce((s,e)=>s+(e.amount||0),0);
+  document.getElementById('exp-total-val').textContent=total.toFixed(2)+' EUR';
+  // Update exp_log label
+  document.getElementById('exp-who').placeholder=t('exp_who');
+  document.getElementById('exp-desc').placeholder=t('exp_desc');
+}
+
+// ═══════════════════════════════════════════════════════
 // PROGRESS
-// ══════════════════════════════════════════
-function updateGlobalProgress() {
-  let total=0, done=0;
-  rolesData.forEach(r => {
-    const rs = getRoleState(r.id);
-    r.tasks.fr.forEach((_,i) => { total++; if(rs.tasks[i]) done++; });
-    rs.custom.forEach(t => { total++; if(t.done) done++; });
+// ═══════════════════════════════════════════════════════
+function updateGlobalProgress(){
+  let total=0,done=0;
+  rolesData.forEach(r=>{
+    const rs=getS(r.id);
+    r.tasks.fr.forEach((_,i)=>{total++;if(rs.tasks&&rs.tasks[i])done++;});
+    (rs.custom||[]).forEach(t=>{total++;if(t.done)done++;});
   });
-  const pct = total ? Math.round(done/total*100) : 0;
-  document.getElementById('gp-bar').style.width = pct+'%';
-  document.getElementById('gp-pct').textContent = pct+'%';
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('gp-bar').style.width=pct+'%';
+  document.getElementById('gp-pct').textContent=pct+'%';
 }
 
-function updateRoleProgress(id, card) {
-  const r = rolesData.find(x=>x.id===id);
-  const rs = getRoleState(id);
-  let total = r.tasks.fr.length + rs.custom.length, done=0;
-  r.tasks.fr.forEach((_,i) => { if(rs.tasks[i]) done++; });
-  rs.custom.forEach(t => { if(t.done) done++; });
-  const pct = total ? Math.round(done/total*100) : 0;
-  const bar = card.querySelector('.rprog-fill');
-  const txt = card.querySelector('.rprog-txt');
-  if(bar) bar.style.width = pct+'%';
-  if(txt) txt.textContent = done+'/'+total+' '+t('tasks_label');
+function updateRoleProgress(id,card){
+  const r=rolesData.find(x=>x.id===id);
+  const rs=getS(id);
+  let total=r.tasks.fr.length+(rs.custom||[]).length,done=0;
+  r.tasks.fr.forEach((_,i)=>{if(rs.tasks&&rs.tasks[i])done++;});
+  (rs.custom||[]).forEach(t=>{if(t.done)done++;});
+  const pct=total?Math.round(done/total*100):0;
+  const bar=card.querySelector('.rprog-fill');
+  const txt=card.querySelector('.rprog-txt');
+  if(bar)bar.style.width=pct+'%';
+  if(txt)txt.textContent=done+'/'+total+' '+t('tasks_label');
 }
 
-// ══════════════════════════════════════════
-// RENDER TASKS
-// ══════════════════════════════════════════
-function renderTaskList(role, card) {
-  const rs = getRoleState(role.id);
-  const body = card.querySelector('.tasks-body');
-  body.innerHTML = '';
-  const taskList = role.tasks[lang] || role.tasks.fr;
-
-  taskList.forEach((text, i) => {
-    const checked = !!rs.tasks[i];
-    const row = document.createElement('div');
-    row.className = 'task-row';
-    row.innerHTML = `<div class="cb${checked?' on':''}"></div><span class="task-lbl${checked?' done':''}">${text}</span>`;
-    const toggle = () => { rs.tasks[i]=!rs.tasks[i]; debounceSave(role.id); renderTaskList(role,card); updateRoleProgress(role.id,card); updateGlobalProgress(); };
-    row.querySelector('.cb').addEventListener('click', toggle);
-    row.querySelector('.task-lbl').addEventListener('click', toggle);
+// ═══════════════════════════════════════════════════════
+// TASK LIST
+// ═══════════════════════════════════════════════════════
+function renderTaskList(role,card){
+  const rs=getS(role.id);if(!rs.tasks)rs.tasks={};if(!rs.custom)rs.custom=[];
+  const body=card.querySelector('.tasks-body');body.innerHTML='';
+  const taskList=role.tasks[lang]||role.tasks.fr;
+  taskList.forEach((text,i)=>{
+    const checked=!!rs.tasks[i];
+    const row=document.createElement('div');row.className='task-row';
+    row.innerHTML=`<div class="cb${checked?' on':''}"></div><span class="task-lbl${checked?' done':''}">${text}</span>`;
+    const toggle=()=>{rs.tasks[i]=!rs.tasks[i];debounce(role.id);renderTaskList(role,card);updateRoleProgress(role.id,card);updateGlobalProgress();};
+    row.querySelector('.cb').addEventListener('click',toggle);
+    row.querySelector('.task-lbl').addEventListener('click',toggle);
     body.appendChild(row);
   });
-
-  rs.custom.forEach((ct, ci) => {
-    const row = document.createElement('div');
-    row.className = 'task-row';
-    row.innerHTML = `<div class="cb${ct.done?' on':''}"></div><span class="task-lbl${ct.done?' done':''}">${ct.text}</span><span class="task-del">×</span>`;
-    const toggle = () => { rs.custom[ci].done=!rs.custom[ci].done; debounceSave(role.id); renderTaskList(role,card); updateRoleProgress(role.id,card); updateGlobalProgress(); };
-    row.querySelector('.cb').addEventListener('click', toggle);
-    row.querySelector('.task-lbl').addEventListener('click', toggle);
-    row.querySelector('.task-del').addEventListener('click', () => { rs.custom.splice(ci,1); debounceSave(role.id); renderTaskList(role,card); updateRoleProgress(role.id,card); updateGlobalProgress(); });
+  rs.custom.forEach((ct,ci)=>{
+    const row=document.createElement('div');row.className='task-row';
+    row.innerHTML=`<div class="cb${ct.done?' on':''}"></div><span class="task-lbl${ct.done?' done':''}">${ct.text}</span><span class="task-del">×</span>`;
+    const toggle=()=>{rs.custom[ci].done=!rs.custom[ci].done;debounce(role.id);renderTaskList(role,card);updateRoleProgress(role.id,card);updateGlobalProgress();};
+    row.querySelector('.cb').addEventListener('click',toggle);
+    row.querySelector('.task-lbl').addEventListener('click',toggle);
+    row.querySelector('.task-del').addEventListener('click',()=>{rs.custom.splice(ci,1);debounce(role.id);renderTaskList(role,card);updateRoleProgress(role.id,card);updateGlobalProgress();});
     body.appendChild(row);
   });
+  const addRow=document.createElement('div');addRow.className='add-row';
+  const inp=document.createElement('input');inp.className='add-input';inp.maxLength=120;inp.placeholder=t('add_task_ph');
+  const btn=document.createElement('button');btn.className='add-btn';btn.textContent='+';
+  const addTask=()=>{const txt=inp.value.trim();if(!txt)return;rs.custom.push({text:txt,done:false});debounce(role.id);inp.value='';renderTaskList(role,card);updateRoleProgress(role.id,card);updateGlobalProgress();};
+  btn.addEventListener('click',addTask);inp.addEventListener('keydown',e=>{if(e.key==='Enter')addTask();});
+  addRow.appendChild(inp);addRow.appendChild(btn);body.appendChild(addRow);
+}
 
-  const addRow = document.createElement('div');
-  addRow.className = 'add-row';
-  const inp = document.createElement('input');
-  inp.className = 'add-input'; inp.maxLength = 120;
-  inp.placeholder = t('add_task_placeholder');
-  const btn = document.createElement('button');
-  btn.className = 'add-btn'; btn.textContent = '+';
-  const addTask = () => {
-    const txt = inp.value.trim(); if(!txt) return;
-    rs.custom.push({text:txt,done:false}); debounceSave(role.id);
-    inp.value = ''; renderTaskList(role,card); updateRoleProgress(role.id,card); updateGlobalProgress();
+// ═══════════════════════════════════════════════════════
+// COMMENTS
+// ═══════════════════════════════════════════════════════
+function renderComments(roleId,card){
+  const section=card.querySelector('.comments-section');
+  const ck='comments_'+roleId;
+  const cs=getS(ck);if(!cs.list)cs.list=[];
+  const inner=section.querySelector('.comments-inner');
+  const toggle=section.querySelector('.comments-toggle');
+  const arrow=section.querySelector('.comments-toggle-arrow');
+  // Toggle label
+  toggle.querySelector('.toggle-label').textContent=inner.classList.contains('open')?t('comments_toggle_hide'):t('comments_toggle_show');
+  // List
+  const listEl=inner.querySelector('.comment-list');
+  if(!cs.list.length){listEl.innerHTML=`<div class="comment-empty">${t('comments_empty')}</div>`;}
+  else{listEl.innerHTML=cs.list.map(c=>`<div class="comment-item"><div class="comment-meta"><span class="comment-author">${c.author}</span><span class="comment-time">${c.ts}</span></div><div class="comment-text">${c.text}</div></div>`).join('');}
+  listEl.scrollTop=listEl.scrollHeight;
+  // Placeholders
+  inner.querySelector('.comment-author-input').placeholder=t('comments_author');
+  inner.querySelector('.comment-msg-input').placeholder=t('comments_ph');
+  inner.querySelector('.comment-send-btn').textContent=t('comments_send');
+}
+
+function buildCommentSection(roleId){
+  const ck='comments_'+roleId;
+  const section=document.createElement('div');section.className='comments-section';
+  section.innerHTML=`
+    <div class="comments-toggle">
+      <span class="comments-toggle-arrow">▶</span>
+      <span class="toggle-label">${t('comments_toggle_show')}</span>
+      <span style="margin-left:auto;font-size:11px;color:var(--border)" id="cmt-count-${roleId}"></span>
+    </div>
+    <div class="comments-inner">
+      <div class="comment-list"></div>
+      <div class="comment-form">
+        <input class="comment-author-input" type="text" maxlength="20" placeholder="${t('comments_author')}"/>
+        <input class="comment-msg-input" type="text" maxlength="200" placeholder="${t('comments_ph')}"/>
+        <button class="comment-send-btn">${t('comments_send')}</button>
+      </div>
+    </div>`;
+  const toggle=section.querySelector('.comments-toggle');
+  const inner=section.querySelector('.comments-inner');
+  const arrow=section.querySelector('.comments-toggle-arrow');
+  toggle.addEventListener('click',()=>{
+    inner.classList.toggle('open');
+    arrow.classList.toggle('open');
+    toggle.querySelector('.toggle-label').textContent=inner.classList.contains('open')?t('comments_toggle_hide'):t('comments_toggle_show');
+  });
+  const sendBtn=section.querySelector('.comment-send-btn');
+  const authorIn=section.querySelector('.comment-author-input');
+  const msgIn=section.querySelector('.comment-msg-input');
+  const sendComment=()=>{
+    const author=authorIn.value.trim();const msg=msgIn.value.trim();
+    if(!author||!msg)return;
+    const cs=getS(ck);if(!cs.list)cs.list=[];
+    const ts=new Date().toLocaleTimeString(lang==='fr'?'fr-FR':'en-GB',{hour:'2-digit',minute:'2-digit'});
+    const dateStr=new Date().toLocaleDateString(lang==='fr'?'fr-BE':'en-GB',{day:'2-digit',month:'2-digit'});
+    cs.list.push({author,text:msg,ts:dateStr+' '+ts});
+    msgIn.value='';debounce(ck);
+    renderComments(roleId,section.closest('.role-card'));
+    updateCommentCount(roleId);
   };
-  btn.addEventListener('click', addTask);
-  inp.addEventListener('keydown', e => { if(e.key==='Enter') addTask(); });
-  addRow.appendChild(inp); addRow.appendChild(btn);
-  body.appendChild(addRow);
+  sendBtn.addEventListener('click',sendComment);
+  msgIn.addEventListener('keydown',e=>{if(e.key==='Enter')sendComment();});
+  return section;
 }
 
-// ══════════════════════════════════════════
-// BUILD CARDS
-// ══════════════════════════════════════════
-function buildCard(role) {
-  const rs = getRoleState(role.id);
-  const card = document.createElement('div');
-  card.className = 'role-card';
-  card.id = 'card-'+role.id;
-  card.style.borderTop = '3px solid '+role.color;
-  const nameVal = rs.name || role.defaultName || '';
-  const title = typeof role.title === 'object' ? role.title[lang] : role.title;
+function updateCommentCount(roleId){
+  const cs=getS('comments_'+roleId);
+  const cnt=document.getElementById('cmt-count-'+roleId);
+  if(cnt&&cs.list&&cs.list.length)cnt.textContent='('+cs.list.length+')';
+}
 
-  card.innerHTML = `
+// ═══════════════════════════════════════════════════════
+// ROLE CARDS
+// ═══════════════════════════════════════════════════════
+function buildCard(role){
+  const rs=getS(role.id);
+  const card=document.createElement('div');card.className='role-card';card.id='card-'+role.id;
+  card.style.borderTop='3px solid '+role.color;
+  const nameVal=rs.name||role.defaultName||'';
+  const title=typeof role.title==='object'?role.title[lang]:role.title;
+  card.innerHTML=`
     <div class="role-top">
       <div class="role-hrow">
         <span class="role-icon">${role.icon}</span>
         <div class="role-info">
           <div class="role-title">${title}</div>
-          <div class="name-row">
-            <input class="name-input" type="text" maxlength="30" value="${nameVal}" placeholder="${t('name_placeholder')}"/>
-            <span class="edit-hint">✏️</span>
-          </div>
+          <div class="name-row"><input class="name-input" type="text" maxlength="30" value="${nameVal}" placeholder="${t('name_ph')}"/><span style="font-size:11px;color:var(--muted)">✏️</span></div>
         </div>
       </div>
     </div>
     <div class="role-prog">
-      <div class="rprog-row">
-        <div class="rprog-bg"><div class="rprog-fill" style="width:0%"></div></div>
-        <span class="rprog-txt">0/0</span>
-      </div>
+      <div class="rprog-row"><div class="rprog-bg"><div class="rprog-fill" style="width:0%"></div></div><span class="rprog-txt">0/0</span></div>
     </div>
-    ${role.hasCities ? `
+    ${role.hasCities?`
     <div class="transport-cities">
       <div class="city-card"><div class="city-from">🇧🇪 ${lang==='fr'?'Bruxelles':'Brussels'}</div><div class="city-detail">${lang==='fr'?'BRU → TRN direct ou BRU → GVA + train (~3h30)':'BRU → TRN direct or BRU → GVA + train (~3h30)'}</div><div class="city-price">~60–100 EUR A/R</div></div>
       <div class="city-card"><div class="city-from">🇫🇷 Paris</div><div class="city-detail">${lang==='fr'?'CDG/ORY → TRN (EasyJet) ou TGV Paris→Turin (~5h)':'CDG/ORY → TRN (EasyJet) or TGV Paris→Turin (~5h)'}</div><div class="city-price">~50–90 EUR A/R</div></div>
-      <div class="city-card"><div class="city-from">🇨🇭 ${lang==='fr'?'Bale':'Basel'}</div><div class="city-detail">${lang==='fr'?'BSL → TRN ou train Basel→Geneve puis Turin':'BSL → TRN or train Basel→Geneva then Turin'}</div><div class="city-price">~80–120 EUR A/R</div></div>
-      <div class="city-card"><div class="city-from">🇲🇦 ${lang==='fr'?'Maroc':'Morocco'}</div><div class="city-detail">${lang==='fr'?'CMN/RAK via Paris ou Madrid. Prevoir escale. Arrivee Turin avant 16h.':'CMN/RAK via Paris or Madrid. Allow for layover. Arrive Turin before 4pm.'}</div><div class="city-price">~150–250 EUR A/R</div></div>
-    </div>` : ''}
-    <div class="tasks-body"></div>
-  `;
-
-  card.querySelector('.name-input').addEventListener('change', e => {
-    getRoleState(role.id).name = e.target.value.trim();
-    debounceSave(role.id);
-  });
-
-  renderTaskList(role, card);
-  updateRoleProgress(role.id, card);
+      <div class="city-card"><div class="city-from">🇨🇭 ${lang==='fr'?'Bâle':'Basel'}</div><div class="city-detail">${lang==='fr'?'BSL → TRN ou train Basel→Genève puis Turin':'BSL → TRN or train Basel→Geneva then Turin'}</div><div class="city-price">~80–120 EUR A/R</div></div>
+      <div class="city-card"><div class="city-from">🇲🇦 ${lang==='fr'?'Maroc':'Morocco'}</div><div class="city-detail">${lang==='fr'?'CMN/RAK via Paris ou Madrid. Escale. Arrivée Turin avant 16h.':'CMN/RAK via Paris or Madrid. Allow for layover. Arrive Turin before 4pm.'}</div><div class="city-price">~150–250 EUR A/R</div></div>
+    </div>`:''}
+    <div class="tasks-body"></div>`;
+  card.querySelector('.name-input').addEventListener('change',e=>{getS(role.id).name=e.target.value.trim();debounce(role.id);});
+  card.appendChild(buildCommentSection(role.id));
+  renderTaskList(role,card);updateRoleProgress(role.id,card);
   return card;
 }
 
-function renderAll() {
-  const grid = document.getElementById('roles-grid');
-  grid.innerHTML = '';
-  rolesData.forEach(r => grid.appendChild(buildCard(r)));
+function renderAll(){
+  const grid=document.getElementById('roles-grid');grid.innerHTML='';
+  rolesData.forEach(r=>grid.appendChild(buildCard(r)));
   updateGlobalProgress();
-  buildMap();
+  rolesData.forEach(r=>updateCommentCount(r.id));
   applyTranslations();
 }
 
-function applyTranslations() {
-  document.querySelectorAll('[data-t]').forEach(el => {
-    const key = el.getAttribute('data-t');
-    el.textContent = t(key);
-  });
-  document.getElementById('btn-fr').className = 'lang-opt'+(lang==='fr'?' active':'');
-  document.getElementById('btn-en').className = 'lang-opt'+(lang==='en'?' active':'');
-  document.documentElement.lang = lang;
+function applyTranslations(){
+  document.querySelectorAll('[data-t]').forEach(el=>{const k=el.getAttribute('data-t');el.textContent=t(k);});
+  document.getElementById('btn-fr').className='lang-opt'+(lang==='fr'?' active':'');
+  document.getElementById('btn-en').className='lang-opt'+(lang==='en'?' active':'');
+  document.documentElement.lang=lang;
 }
 
-// ══════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 // REALTIME
-// ══════════════════════════════════════════
-function subscribeRealtime() {
-  db.channel('trek-live')
-    .on('postgres_changes', {event:'*',schema:'public',table:'trek_state'}, payload => {
-      const { key, value } = payload.new || {};
-      if(!key||!value) return;
-      state[key] = value;
-      const card = document.getElementById('card-'+key);
-      if(card) {
-        const role = rolesData.find(r=>r.id===key);
-        if(role) {
-          const ni = card.querySelector('.name-input');
-          if(ni && document.activeElement!==ni) ni.value = getRoleState(key).name || role.defaultName || '';
-          renderTaskList(role, card);
-          updateRoleProgress(key, card);
+// ═══════════════════════════════════════════════════════
+function subscribeRealtime(){
+  db.channel('trek-live-v2')
+    .on('postgres_changes',{event:'*',schema:'public',table:'trek_state'},payload=>{
+      const{key,value}=payload.new||{};
+      if(!key||!value)return;
+      state[key]=value;
+      // Re-render appropriate section
+      if(key.startsWith('comments_')){
+        const roleId=key.replace('comments_','');
+        const card=document.getElementById('card-'+roleId);
+        if(card)renderComments(roleId,card);
+        updateCommentCount(roleId);
+      } else if(key==='participants'){
+        renderParticipants();
+      } else if(key==='expenses'){
+        renderExpenses();
+      } else {
+        const card=document.getElementById('card-'+key);
+        if(card){
+          const role=rolesData.find(r=>r.id===key);
+          if(role){
+            const ni=card.querySelector('.name-input');
+            if(ni&&document.activeElement!==ni)ni.value=getS(key).name||role.defaultName||'';
+            renderTaskList(role,card);updateRoleProgress(key,card);
+          }
         }
+        updateGlobalProgress();
       }
-      updateGlobalProgress();
-      const time = new Date().toLocaleTimeString(lang==='fr'?'fr-FR':'en-GB',{hour:'2-digit',minute:'2-digit'});
-      syncMsg.textContent = t('sync_updated')+' · '+time;
+      const time=new Date().toLocaleTimeString(lang==='fr'?'fr-FR':'en-GB',{hour:'2-digit',minute:'2-digit'});
+      syncMsg.textContent=t('sync_updated')+' · '+time;
     })
-    .subscribe(s => {
-      if(s==='SUBSCRIBED') { syncDot.className='connected'; setSyncMsg('sync_connected'); }
-    });
+    .subscribe(s=>{if(s==='SUBSCRIBED'){syncDot.className='connected';setSyncMsg('sync_connected');}});
 }
 
-// ══════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// PWA HINT
+// ═══════════════════════════════════════════════════════
+function showPwaHint(){
+  const hint=document.getElementById('pwa-hint');
+  // Show on mobile Safari or Android Chrome
+  const isMobile=/iPhone|iPad|Android/.test(navigator.userAgent);
+  const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone;
+  if(isMobile&&!isStandalone){hint.style.display='block';}
+}
+
+// ═══════════════════════════════════════════════════════
 // INIT
-// ══════════════════════════════════════════
-renderInfoGrid();
-applyTranslations();
-loadState().then(() => subscribeRealtime());
+// ═══════════════════════════════════════════════════════
+function init(){
+  applyTranslations();
+  renderInfoGrid();
+  renderGallery();
+  initCountdown();
+  initMap();
+  updateExpenseCheckboxes();
+  showPwaHint();
+  loadState().then(()=>subscribeRealtime());
+}
+
+init();
 </script>
 </body>
 </html>
